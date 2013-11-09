@@ -73,7 +73,7 @@ socket.on('connect', function () {
     }
   }); 
 
-  room.afficherFomulaire();
+  formulaire.afficherFomulaire();
 
 
 });
