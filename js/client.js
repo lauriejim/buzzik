@@ -3,8 +3,75 @@ var socket = io.connect('http://localhost:1337');
 socket.on('connect', function () {
 
   room.init({
+    player : 'player',
+    buzzer : 'buzzer',
+    affichage : 'rooms',
+    form : 'titleform',
+    titre : 'title',
 
-  });
+    roomListed : function () {
+      $('#'+room.params.affichage).empty();
+      for (i in room.rooms) {
+        $('#'+room.params.affichage).append('<div><a href="#" onclick="room.rejoindreRoom(\''+room.rooms[i].id+'\')">' + room.rooms[i].nom + '</a></div>');
+      }
+    },
+
+    emitBuzzed : function () {
+      $(room.params.buzzer).remove();
+      $('body').load("template/formulaire.html", function () {
+        $('#'+room.params.titre).focus();
+        $('#'+room.params.form).submit(function (e) {
+          e.preventDefault();
+          room.envoiReponse($('#'+room.params.titre).val());
+          return false;
+        });
+      });
+    },
+
+    onBuzzed : function () {
+      $('#'+room.params.buzzer).remove();
+      var element = document.getElementById(room.params.player);
+      if (typeof element != 'undefined' && element != null) {
+        document.getElementById(room.params.player).pause();
+      }
+    },
+
+    emptyAnswer : function () {
+      alert('Vous devez entrer un titre !');
+    },
+
+    issetAnswer : function () {
+      socket.emit('reponse', $('#'+room.params.titre).val());
+    },
+
+    appendBuzzer : function () {
+      $('#'+room.params.buzzer).remove();
+      $('body').load("template/buzzer.html");
+    },
+
+    played : function () {
+      document.getElementById(room.params.player).play();
+    },
+
+    roomAdded : function () {
+      $('#accueil').remove();
+    },
+
+    roomJoined : function () {
+      $('#accueil').remove();
+      $('body').load("template/buzzer.html");
+    },
+
+    musiqueLoaded : function () {
+      document.getElementById(room.params.player).src = room.numTrack;
+      if (room.etat == "play") {
+        document.getElementById(room.params.player).play();
+        document.getElementById(room.params.player).addEventListener('ended', function() {
+          socket.emit('musiqueFini');
+        });
+      }
+    }
+  }); 
 
   room.afficherFomulaire();
 
@@ -19,56 +86,25 @@ socket.on('message', function (message) {
 });
 
 socket.on('afficherLesRoomsExistante', function (rooms) {
-  $('#rooms').empty();
-  for (i in rooms) {
-    $('#rooms').append('<div><a href="#" onclick="rejoindreRoom(\''+rooms[i].id+'\')">' + rooms[i].nom + '</a></div>');
-  }
+  room.listeRoom(rooms);
 });
 
 socket.on('roomAjoute', function () {
-  $('#accueil').remove();
+  room.roomAjoute();
 });
 
 socket.on('roomRejoin', function () {
-  $('#accueil').remove();
-  $('body').load("template/buzzer.html");
+  room.roomRejoint();
 });
 
 socket.on('prochaineMusique', function(numTrack, etat){
-  var element = document.getElementById('player');
-  if (typeof element != 'undefined' && element != null) {
-    document.getElementById('player').src = numTrack;
-    if (etat == "play") {
-      document.getElementById('player').play();
-      document.getElementById('player').addEventListener('ended', function() {
-        socket.emit('musiqueFini');
-      });
-    }
-  }else{
-    $('#buzzer').remove();
-    $('body').load("template/buzzer.html");
-  }
+  room.prochaineMusique(numTrack, etat)
 });
 
 socket.on('buzz', function () {
-  $('#buzzer').remove();
-  var element = document.getElementById('player');
-  if (typeof element != 'undefined' && element != null) {
-    document.getElementById('player').pause();
-  }
+  room.onBuzz();
 });
 
 socket.on('afficheBuzzer', function () {
-  var element = document.getElementById('player');
-  if (typeof element == 'undefined' || element == null) {
-    $('#buzzer').remove();
-    $('body').load("template/buzzer.html");
-  }else{
-    document.getElementById('player').play();
-  }
+  room.afficherBuzzer();
 });
-
-
-function rejoindreRoom(room){
-  socket.emit('rejoindreRoom', room, prompt('Mot de passe'), prompt('nom'));
-}

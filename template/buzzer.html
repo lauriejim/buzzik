@@ -1,21 +1,8 @@
 <div id="buzzer"></div>
+
 <script type="text/javascript">
-$('#buzzer').click(function(event){
-	event.preventDefault();
-	socket.emit('buzz');
-	this.remove();
-	$('body').load("template/formulaire.html", function () {
-	  $('#title').focus();
-	  $('#titleform').submit(function(event){
-	    event.preventDefault();
-	    if($('#title').val() == ''){
-	      alert('Vous devez entrer un titre !');
-	    }else{
-	      socket.emit('reponse', $('#title').val());
-	    }
-	    return false;
-	  });
-	});
-	return false;
+$('#'+room.params.buzzer).on('click', function(e){
+	e.preventDefault();
+	room.emitBuzz();
 });
 </script>

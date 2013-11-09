@@ -1,14 +1,88 @@
 var room = {
 
   defaults : {
-    player : 'player',
+    player : '',
+    buzzer : '',
+    affichage : '',
+    form : '',
+    titre : '',
     listMusiqueUrl: '',
-    listMusiqueTitle : ''
+    listMusiqueTitle : '',
+
+    emitBuzzed : function () {},
+    onBuzzed : function () {},
+    issetAnswer : function () {},
+    emptyAnswer : function () {},
+    appendBuzzer : function () {},
+    played : function () {},
+    roomAdded : function () {},
+    roomJoined : function () {},
+    musiqueLoaded : function () {},
+    roomListed : function () {}
   },
 
   init : function (options) {
     this.params = $.extend(this.defaults, options);
   },
+
+  listeRoom : function (rooms) {
+    this.rooms = rooms;
+    this.params.roomListed(this);
+  },
+
+  rejoindreRoom : function (room){
+    socket.emit('rejoindreRoom', room, prompt('Mot de passe'), prompt('nom'));
+  },
+
+  roomAjoute : function () {
+    this.params.roomAdded(this);
+  },
+
+  roomRejoint : function () {
+    this.params.roomJoined(this);
+  },
+
+  emitBuzz : function () {
+    socket.emit('buzz');
+    this.params.emitBuzzed.call(this);
+  },
+
+  onBuzz : function () {
+    this.params.onBuzzed(this);
+  },
+
+  envoiReponse : function (titre) {
+     if(titre == ''){
+        this.params.emptyAnswer(this);
+      }else{
+        this.params.issetAnswer(this);
+      }
+  },
+
+  afficherBuzzer : function () {
+    var element = document.getElementById(room.params.player);
+    if (typeof element == 'undefined' || element == null) {
+      this.params.appendBuzzer(this);
+    }else{
+      this.params.played(this);
+    }
+  },
+
+  prochaineMusique : function (numTrack, etat) {
+    this.etat = etat;
+    this.numTrack = numTrack;
+    var element = document.getElementById(this.params.player);
+    if (typeof element != 'undefined' && element != null) {
+      this.params.musiqueLoaded(this);
+    }else{
+     this.params.appendBuzzer(this);
+    }
+  },
+
+
+
+  /* Formulaire */
+  /***************************************/
 
   afficherFomulaire : function () {
 
@@ -124,8 +198,8 @@ var room = {
             if (typeof(o[i])=="object") {
               console.log(o[i].preview);
               console.log(o[i].title);
-                room.params.listMusiqueUrl = room.params.listMusiqueUrl + "," + o[i].preview;
-                room.params.listMusiqueTitle = room.params.listMusiqueTitle + "," + o[i].title;
+              room.params.listMusiqueUrl = room.params.listMusiqueUrl + "," + o[i].preview;
+              room.params.listMusiqueTitle = room.params.listMusiqueTitle + "," + o[i].title;
             }
         }
     }
