@@ -18,7 +18,8 @@ var room = {
     roomAdded : function () {},
     roomJoined : function () {},
     musiqueLoaded : function () {},
-    roomListed : function () {}
+    roomListed : function () {},
+    playerListed : function () {}
   },
 
   init : function (options) {
@@ -39,7 +40,12 @@ var room = {
   },
 
   roomRejoint : function () {
-    this.params.roomJoined(this);
+    $('#'+room.params.buzzer).remove();
+    var element = document.getElementById(room.params.player);
+    if (typeof element == 'undefined' || element == null) {
+      this.params.roomJoined(this);
+    }
+    this.params.playerListed(this);
   },
 
   emitBuzz : function () {
@@ -63,6 +69,7 @@ var room = {
     var element = document.getElementById(room.params.player);
     if (typeof element == 'undefined' || element == null) {
       this.params.appendBuzzer(this);
+      this.params.playerListed(this);
     }else{
       this.params.played(this);
     }

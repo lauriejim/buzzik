@@ -8,6 +8,7 @@ socket.on('connect', function () {
     affichage : 'rooms',
     form : 'titleform',
     titre : 'title',
+    listeJoueur: 'listeJoueur',
 
     roomListed : function () {
       $('#'+room.params.affichage).empty();
@@ -16,8 +17,14 @@ socket.on('connect', function () {
       }
     },
 
+    playerListed : function () {
+      $('#'+room.params.listeJoueur).empty();
+      for (i in room.rooms) {
+        $('#'+room.params.listeJoueur).append('coucou<br>');
+      }
+    },
+
     emitBuzzed : function () {
-      $(room.params.buzzer).remove();
       $('body').load("template/formulaire.html", function () {
         $('#'+room.params.titre).focus();
         $('#'+room.params.form).submit(function (e) {
@@ -58,7 +65,6 @@ socket.on('connect', function () {
     },
 
     roomJoined : function () {
-      $('#accueil').remove();
       $('body').load("template/buzzer.html");
     },
 

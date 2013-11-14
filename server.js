@@ -4,16 +4,11 @@ var express = require('express')
   , server = http.createServer(app)
   , io = require('socket.io').listen(server);
 
-server.listen(1337);
 
-/* routage
-app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
-});*/
+server.listen(1337);	
 
-// liste des utilisateurs connecté
-var usernames = {};
-var me;
+// liste des utilisateur
+var usernames = new Array();
 
 // liste des rooms disponible
 var rooms = new Array();
@@ -28,7 +23,7 @@ io.sockets.on('connection', function (socket) {
 	socket.emit('afficherLesRoomsExistante', rooms)
 
 	socket.on('ajouterRoom', function (nomPartie, passPartie, nbrJoueur, nbrChanson){
-		var newRoom = {id: rooms.length, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson};
+		var newRoom = {id: rooms.length, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, buzz: false};
 		socket.room = rooms.length;
 		rooms.push(newRoom);
 		socket.join(socket.room);
@@ -41,7 +36,14 @@ io.sockets.on('connection', function (socket) {
 			socket.join(room);
 			socket.room = room;
 			socket.name = nom;
+			usernames.push({
+				user : nom,
+				point : 0,
+				room : rooms[room].id
+			})
+			console.log(usernames);
 			socket.emit('roomRejoin');
+			socket.broadcast.to(socket.room).emit('roomRejoin');
 		}else{
 			socket.emit('message', 'Mauvais mot de passe');
 		}
@@ -63,10 +65,17 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('buzz', function() {
-		socket.broadcast.to(socket.room).emit('buzz');
+		if (!rooms[socket.room].buzz) {
+			rooms[socket.room].buzz = true;
+			console.log(rooms[socket.room].buzz);
+			socket.broadcast.to(socket.room).emit('buzz');
+		}
+		
 	});
 
 	socket.on('reponse', function(reponse){
+		rooms[socket.room].buzz = false;
+		console.log(rooms[socket.room].buzz);
 		if(reponse.toLowerCase()  == listMusiqueTitle[numTrack].toLowerCase() ){
 			numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
 			console.log(listMusiqueTitle[numTrack])
