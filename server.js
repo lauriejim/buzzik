@@ -23,7 +23,7 @@ io.sockets.on('connection', function (socket) {
 	socket.emit('afficherLesRoomsExistante', rooms)
 
 	socket.on('ajouterRoom', function (nomPartie, passPartie, nbrJoueur, nbrChanson){
-		var newRoom = {id: rooms.length, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, buzz: false};
+		var newRoom = {id: rooms.length, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, play: false, buzz: false};
 		socket.room = rooms.length;
 		rooms.push(newRoom);
 		socket.join(socket.room);
@@ -58,6 +58,10 @@ io.sockets.on('connection', function (socket) {
 		socket.emit('prochaineMusique', listMusiqueUrl[numTrack], 'pause');
 	});
 
+	socket.on('debutPartie', function (){
+		rooms[socket.room].play = true;
+	});
+
 	socket.on('musiqueFini', function(){
 		numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
 		console.log(listMusiqueTitle[numTrack])
@@ -65,17 +69,20 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('buzz', function() {
-		if (!rooms[socket.room].buzz) {
+		console.log(rooms[socket.room].buzz, rooms[socket.room].id);
+		if (!rooms[socket.room].buzz && rooms[socket.room].play) {
 			rooms[socket.room].buzz = true;
-			console.log(rooms[socket.room].buzz);
+			console.log(rooms[socket.room].buzz, rooms[socket.room].id);
 			socket.broadcast.to(socket.room).emit('buzz');
+			socket.emit('validBuzz');
 		}
-		
+		rooms[socket.room].play = false;
 	});
 
 	socket.on('reponse', function(reponse){
 		rooms[socket.room].buzz = false;
-		console.log(rooms[socket.room].buzz);
+		rooms[socket.room].play = true;
+		console.log(rooms[socket.room].buzz, rooms[socket.room].id);
 		if(reponse.toLowerCase()  == listMusiqueTitle[numTrack].toLowerCase() ){
 			numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
 			console.log(listMusiqueTitle[numTrack])

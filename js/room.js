@@ -28,7 +28,7 @@ var room = {
 
   listeRoom : function (rooms) {
     this.rooms = rooms;
-    this.params.roomListed(this);
+    this.params.roomListed.call(this);
   },
 
   rejoindreRoom : function (room){
@@ -36,40 +36,44 @@ var room = {
   },
 
   roomAjoute : function () {
-    this.params.roomAdded(this);
+    this.params.roomAdded.call(this);
   },
 
   roomRejoint : function () {
     $('#'+room.params.buzzer).remove();
     var element = document.getElementById(room.params.player);
     if (typeof element == 'undefined' || element == null) {
-      this.params.roomJoined(this);
+      this.params.roomJoined.call(this);
     }
-    this.params.playerListed(this);
+    this.params.playerListed.call(this);
   },
 
   emitBuzz : function () {
     socket.emit('buzz');
+  },
+
+  validBuzz : function () {
+    console.log('coucou');
     this.params.emitBuzzed.call(this);
   },
 
   onBuzz : function () {
-    this.params.onBuzzed(this);
+    this.params.onBuzzed.call(this);
   },
 
   envoiReponse : function (titre) {
      if(titre == ''){
-        this.params.emptyAnswer(this);
+        this.params.emptyAnswer.call(this);
       }else{
-        this.params.issetAnswer(this);
+        this.params.issetAnswer.call(this);
       }
   },
 
   afficherBuzzer : function () {
     var element = document.getElementById(room.params.player);
     if (typeof element == 'undefined' || element == null) {
-      this.params.appendBuzzer(this);
-      this.params.playerListed(this);
+      this.params.appendBuzzer.call(this);
+      this.params.playerListed.call(this);
     }else{
       this.params.played(this);
     }
@@ -80,9 +84,9 @@ var room = {
     this.numTrack = numTrack;
     var element = document.getElementById(this.params.player);
     if (typeof element != 'undefined' && element != null) {
-      this.params.musiqueLoaded(this);
+      this.params.musiqueLoaded.call(this);
     }else{
-     this.params.appendBuzzer(this);
+     this.params.appendBuzzer.call(this);
     }
   },
 

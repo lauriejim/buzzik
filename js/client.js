@@ -36,7 +36,7 @@ socket.on('connect', function () {
     },
 
     onBuzzed : function () {
-      $('#'+room.params.buzzer).remove();
+      //$('#'+room.params.buzzer).remove();
       var element = document.getElementById(room.params.player);
       if (typeof element != 'undefined' && element != null) {
         document.getElementById(room.params.player).pause();
@@ -109,6 +109,11 @@ socket.on('prochaineMusique', function(numTrack, etat){
 
 socket.on('buzz', function () {
   room.onBuzz();
+});
+
+socket.on('validBuzz', function () {
+  console.log('coucou');
+  room.validBuzz();
 });
 
 socket.on('afficheBuzzer', function () {
