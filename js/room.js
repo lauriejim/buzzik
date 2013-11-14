@@ -40,11 +40,13 @@ var room = {
   },
 
   roomRejoint : function () {
-    $('#'+room.params.buzzer).remove();
     var element = document.getElementById(room.params.player);
     if (typeof element == 'undefined' || element == null) {
       this.params.roomJoined.call(this);
     }
+  },
+
+  afficherJoueur : function () {
     this.params.playerListed.call(this);
   },
 
@@ -52,8 +54,8 @@ var room = {
     socket.emit('buzz');
   },
 
-  validBuzz : function () {
-    console.log('coucou');
+  valideBuzz : function () {
+    console.log('exe');
     this.params.emitBuzzed.call(this);
   },
 
@@ -76,6 +78,7 @@ var room = {
       this.params.playerListed.call(this);
     }else{
       this.params.played(this);
+      this.params.playerListed.call(this);
     }
   },
 

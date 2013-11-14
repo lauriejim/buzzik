@@ -18,9 +18,10 @@ socket.on('connect', function () {
     },
 
     playerListed : function () {
+      console.log(room.usernames);
       $('#'+room.params.listeJoueur).empty();
-      for (i in room.rooms) {
-        $('#'+room.params.listeJoueur).append('coucou<br>');
+      for (i in room.usernames) {
+        $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
       }
     },
 
@@ -103,17 +104,24 @@ socket.on('roomRejoin', function () {
   room.roomRejoint();
 });
 
+socket.on('afficherJoueur', function (usernames, rooms) {
+  room.usernames = usernames;
+  room.room = rooms;
+  room.afficherJoueur();
+})
+
 socket.on('prochaineMusique', function(numTrack, etat){
   room.prochaineMusique(numTrack, etat)
 });
 
 socket.on('buzz', function () {
+  console.log('buzz dans la room');
   room.onBuzz();
 });
 
-socket.on('validBuzz', function () {
-  console.log('coucou');
-  room.validBuzz();
+socket.on('valideBuzz', function (a) {
+  console.log(a);
+  room.valideBuzz();
 });
 
 socket.on('afficheBuzzer', function () {
