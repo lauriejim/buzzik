@@ -21,7 +21,9 @@ socket.on('connect', function () {
       console.log(room.usernames);
       $('#'+room.params.listeJoueur).empty();
       for (i in room.usernames) {
-        $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
+        if (room.usernames[i].room == room.room) {
+          $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
+        }
       }
     },
 

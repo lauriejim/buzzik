@@ -44,8 +44,8 @@ io.sockets.on('connection', function (socket) {
 			})
 			console.log(usernames);
 			socket.emit('roomRejoin');
-			socket.broadcast.to(socket.room).emit('roomRejoin');
-			socket.broadcast.to(socket.room).emit('afficherJoueur', usernames, socket.room);
+			//socket.broadcast.to(socket.room).emit('roomRejoin');
+			io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
 		}else{
 			socket.emit('message', 'Mauvais mot de passe');
 		}
@@ -54,9 +54,9 @@ io.sockets.on('connection', function (socket) {
 	socket.on('playerPret', function(infoTrack){
 		listMusiqueUrl = infoTrack.url;
 		listMusiqueTitle = infoTrack.title;
-		console.log(infoTrack.title);
 		numTrack = Math.floor((Math.random()*(listMusiqueTitle.length-1))+1); 
 		console.log(listMusiqueTitle[numTrack]);
+		rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
 		socket.emit('prochaineMusique', listMusiqueUrl[numTrack], 'pause');
 	});
 
@@ -83,9 +83,10 @@ io.sockets.on('connection', function (socket) {
 		rooms[socket.room].buzz = false;
 		rooms[socket.room].play = true;
 		console.log(rooms[socket.room].buzz, rooms[socket.room].id);
-		if(reponse.toLowerCase()  == listMusiqueTitle[numTrack].toLowerCase() ){
+		if(reponse.toLowerCase()  == rooms[socket.room].musiqueCourante.toLowerCase() ){
 			numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
-			console.log(listMusiqueTitle[numTrack])
+			console.log(listMusiqueTitle[numTrack]);
+			rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
 			usernames[socket.num].point += 100;
 			io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
 			io.sockets.to(socket.room).emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
