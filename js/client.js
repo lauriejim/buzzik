@@ -2,6 +2,17 @@ var socket = io.connect('http://localhost:1337');
 
 socket.on('connect', function () {
 
+
+  /*if (typeof location.search != 'undefined'){
+    var getRoom = location.search.split('=');
+    if(!isNaN(getRoom) && getRoom!=''){
+      console.log('coucou')
+      room.rejoindreRoom(getRoom);
+    }
+  }*/
+
+
+
   room.init({
     player : 'player',
     buzzer : 'buzzer',
