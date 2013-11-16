@@ -47,11 +47,7 @@ var room = {
   },
 
   afficherJoueur : function () {
-    
-     var element = document.getElementById(this.params.player);
-     if (typeof element != 'undefined' && element != null) {
-      this.params.playerListed.call(this);
-     }
+    this.params.playerListed.call(this);
   },
 
   emitBuzz : function () {

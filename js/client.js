@@ -8,7 +8,9 @@ socket.on('connect', function () {
     affichage : 'rooms',
     form : 'titleform',
     titre : 'title',
-    listeJoueur: 'listeJoueur',
+    listeAllJoueur: 'listeAllJoueur',
+    listeJoueur : 'listeJoueur',
+    monScore : 'monScore',
 
     roomListed : function () {
       $('#'+room.params.affichage).empty();
@@ -18,11 +20,34 @@ socket.on('connect', function () {
     },
 
     playerListed : function () {
-      console.log(room.usernames);
-      $('#'+room.params.listeJoueur).empty();
-      for (i in room.usernames) {
-        if (room.usernames[i].room == room.room) {
-          $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
+      
+      console.log(room.monId);
+
+
+      var element = document.getElementById(room.params.listeAllJoueur);
+      if (typeof element != 'undefined' && element != null) {
+        $('#'+room.params.listeAllJoueur).empty();
+        for (i in room.usernames) {
+          if (room.usernames[i].room == room.room) {
+            $('#'+room.params.listeAllJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
+          }
+        }
+      }
+
+      element = document.getElementById(room.params.listeJoueur);
+      if (typeof element != 'undefined' && element != null) {
+        $('#'+room.params.listeJoueur).empty();
+        for (j in room.usernames) {
+
+          console.log(j == room.monId, room.usernames[j].room == room.room && j != room.monId)
+          if (room.usernames[j].room == room.room && j != room.monId) {
+            $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[j].user+' Point : '+room.usernames[j].point+'<br>');
+          }
+          if (j == room.monId) {
+            console.log($('#'+room.params.monScore));
+            $('#'+room.params.monScore).empty();
+            $('#'+room.params.monScore).append('Point : '+room.usernames[room.monId].point);
+          }
         }
       }
     },
@@ -56,7 +81,10 @@ socket.on('connect', function () {
 
     appendBuzzer : function () {
       $('#'+room.params.buzzer).remove();
-      $('body').load("template/buzzer.html");
+      $('body').load("template/buzzer.html", function () {
+        console.log('refreshScrore')
+        socket.emit('refreshScrore');
+      });
     },
 
     played : function () {
@@ -68,7 +96,10 @@ socket.on('connect', function () {
     },
 
     roomJoined : function () {
-      $('body').load("template/buzzer.html");
+      $('body').load("template/buzzer.html", function () {
+        console.log('refreshScrore')
+        socket.emit('refreshScrore');
+      });
     },
 
     musiqueLoaded : function () {
@@ -113,9 +144,10 @@ socket.on('roomRejoin', function () {
   room.roomRejoint();
 });
 
-socket.on('afficherJoueur', function (usernames, rooms) {
+socket.on('afficherJoueur', function (usernames, rooms, monId) {
   room.usernames = usernames;
   room.room = rooms;
+  room.monId = monId;
   room.afficherJoueur();
 })
 
@@ -135,4 +167,9 @@ socket.on('valideBuzz', function (a) {
 
 socket.on('afficheBuzzer', function () {
   room.afficherBuzzer();
+});
+
+socket.on('refreshScrore', function () {
+  console.log('refreshScrore')
+  socket.emit('refreshScrore');
 });

@@ -36,16 +36,16 @@ io.sockets.on('connection', function (socket) {
 		if (rooms[room].motDePasse == motDePasse) {
 			socket.join(room);
 			socket.room = room;
-			socket.num = usernames.length;;
+			socket.num = usernames.length;
 			usernames.push({
 				user : nom,
-				point : 0,
+				point : socket.num,
 				room : rooms[room].id
 			})
 			console.log(usernames);
 			socket.emit('roomRejoin');
-			//socket.broadcast.to(socket.room).emit('roomRejoin');
-			io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
+			socket.broadcast.to(socket.room).emit('refreshScrore');
+			//io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
 		}else{
 			socket.emit('message', 'Mauvais mot de passe');
 		}
@@ -94,6 +94,10 @@ io.sockets.on('connection', function (socket) {
 		}else{
 			io.sockets.to(socket.room).emit('afficheBuzzer');
 		}
+	});
+
+	socket.on('refreshScrore', function () {
+		socket.emit('afficherJoueur', usernames, socket.room, socket.num);
 	});
 
 
