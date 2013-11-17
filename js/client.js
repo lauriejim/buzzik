@@ -15,7 +15,9 @@ socket.on('connect', function () {
     roomListed : function () {
       $('#'+room.params.affichage).empty();
       for (i in room.rooms) {
-        $('#'+room.params.affichage).append('<div><a href="#" onclick="room.rejoindreRoom(\''+room.rooms[i].id+'\')">' + room.rooms[i].nom + '</a></div>');
+        if (room.rooms[i] != null) {
+          $('#'+room.params.affichage).append('<div><a href="#" onclick="room.rejoindreRoom(\''+room.rooms[i].id+'\')">' + room.rooms[i].nom + '</a></div>');
+        }
       }
     },
 
@@ -174,4 +176,8 @@ socket.on('afficheBuzzer', function () {
 socket.on('refreshScrore', function () {
   console.log('refreshScrore')
   socket.emit('refreshScrore');
+});
+
+socket.on('roomDelete', function () {
+  document.location.href="index.html"; 
 });

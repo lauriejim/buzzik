@@ -18,8 +18,9 @@ var numTrack;
 var listMusiqueUrl = "";
 var listMusiqueTitle = "";
 
-var numRoom = 0;
-var numUser = 0;
+var numRoom = 1;
+var numUser = 1;
+
 
 io.sockets.on('connection', function (socket) {
 
@@ -41,21 +42,25 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('rejoindreRoom', function(room, motDePasse, nom){
-		if (rooms[room].motDePasse == motDePasse) {
-			socket.join(room);
-			socket.room = room;
-			socket.numUser = numUser;
-			usernames[socket.numUser] = {
-				id : numUser,
-				user : nom,
-				point : 0,
-				room : rooms[room].id
-			};
-			socket.emit('roomRejoin');
-			socket.broadcast.to(socket.room).emit('refreshScrore');
-			numUser++;
+		if (rooms[room] != null) {
+			if (rooms[room].motDePasse == motDePasse) {
+				socket.join(room);
+				socket.room = room;
+				socket.numUser = numUser;
+				usernames[socket.numUser] = {
+					id : numUser,
+					user : nom,
+					point : 0,
+					room : rooms[room].id
+				};
+				socket.emit('roomRejoin');
+				socket.broadcast.to(socket.room).emit('refreshScrore');
+				numUser++;
+			}else{
+				socket.emit('message', 'Mauvais mot de passe');
+			}
 		}else{
-			socket.emit('message', 'Mauvais mot de passe');
+			socket.emit('message', 'cette room n\'existe pas');
 		}
 	});
 
@@ -112,6 +117,11 @@ io.sockets.on('connection', function (socket) {
 		if (socket.numUser != '') {
 			delete usernames[socket.numUser];
 			socket.broadcast.to(socket.room).emit('refreshScrore');
+		}
+		if (socket.numRoom != '') {
+			delete rooms[socket.numRoom];
+			socket.broadcast.to(socket.room).emit('roomDelete');
+			io.sockets.to('accueil').emit('afficherLesRoomsExistante', rooms)
 		}
 	});
 
