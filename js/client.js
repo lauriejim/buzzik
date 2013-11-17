@@ -28,8 +28,10 @@ socket.on('connect', function () {
       if (typeof element != 'undefined' && element != null) {
         $('#'+room.params.listeAllJoueur).empty();
         for (i in room.usernames) {
-          if (room.usernames[i].room == room.room) {
-            $('#'+room.params.listeAllJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
+          if (room.usernames[i] != null) {
+            if (room.usernames[i].room == room.room) {
+              $('#'+room.params.listeAllJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
+            }
           }
         }
       }
@@ -38,15 +40,15 @@ socket.on('connect', function () {
       if (typeof element != 'undefined' && element != null) {
         $('#'+room.params.listeJoueur).empty();
         for (j in room.usernames) {
-
-          console.log(j == room.monId, room.usernames[j].room == room.room && j != room.monId)
-          if (room.usernames[j].room == room.room && j != room.monId) {
-            $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[j].user+' Point : '+room.usernames[j].point+'<br>');
-          }
-          if (j == room.monId) {
-            console.log($('#'+room.params.monScore));
-            $('#'+room.params.monScore).empty();
-            $('#'+room.params.monScore).append('Point : '+room.usernames[room.monId].point);
+          if (room.usernames[j] != null) {
+            if (room.usernames[j].room == room.room && j != room.monId) {
+              $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[j].user+' Point : '+room.usernames[j].point+'<br>');
+            }
+            if (j == room.monId) {
+              console.log($('#'+room.params.monScore));
+              $('#'+room.params.monScore).empty();
+              $('#'+room.params.monScore).append('Point : '+room.usernames[room.monId].point);
+            }
           }
         }
       }

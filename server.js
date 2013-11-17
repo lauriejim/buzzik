@@ -18,34 +18,42 @@ var numTrack;
 var listMusiqueUrl = "";
 var listMusiqueTitle = "";
 
+var numRoom = 0;
+var numUser = 0;
+
 io.sockets.on('connection', function (socket) {
+
+	socket.numRoom = '';
+	socket.numUser = '';
 	
 	socket.join('accueil');
 	socket.emit('afficherLesRoomsExistante', rooms)
 
 	socket.on('ajouterRoom', function (nomPartie, passPartie, nbrJoueur, nbrChanson){
-		var newRoom = {id: rooms.length, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, play: false, buzz: false};
-		socket.room = rooms.length;
-		rooms.push(newRoom);
+		var newRoom = {id: numRoom, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, play: false, buzz: false};
+		socket.room = numRoom;
+		socket.numRoom = numRoom;
+		rooms[socket.numRoom] = newRoom;
 		socket.join(socket.room);
 		socket.emit('roomAjoute');
-		socket.broadcast.to('accueil').emit('afficherLesRoomsExistante', rooms)
+		socket.broadcast.to('accueil').emit('afficherLesRoomsExistante', rooms);
+		numRoom++;
 	});
 
 	socket.on('rejoindreRoom', function(room, motDePasse, nom){
 		if (rooms[room].motDePasse == motDePasse) {
 			socket.join(room);
 			socket.room = room;
-			socket.num = usernames.length;
-			usernames.push({
+			socket.numUser = numUser;
+			usernames[socket.numUser] = {
+				id : numUser,
 				user : nom,
-				point : socket.num,
+				point : 0,
 				room : rooms[room].id
-			})
-			console.log(usernames);
+			};
 			socket.emit('roomRejoin');
 			socket.broadcast.to(socket.room).emit('refreshScrore');
-			//io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
+			numUser++;
 		}else{
 			socket.emit('message', 'Mauvais mot de passe');
 		}
@@ -87,7 +95,7 @@ io.sockets.on('connection', function (socket) {
 			numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
 			console.log(listMusiqueTitle[numTrack]);
 			rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
-			usernames[socket.num].point += 100;
+			usernames[socket.numUser].point += 100;
 			io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
 			io.sockets.to(socket.room).emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
 			
@@ -97,7 +105,14 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('refreshScrore', function () {
-		socket.emit('afficherJoueur', usernames, socket.room, socket.num);
+		socket.emit('afficherJoueur', usernames, socket.room, socket.numUser);
+	});
+
+	socket.on('disconnect', function () {
+		if (socket.numUser != '') {
+			delete usernames[socket.numUser];
+			socket.broadcast.to(socket.room).emit('refreshScrore');
+		}
 	});
 
 
