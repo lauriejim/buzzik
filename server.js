@@ -31,7 +31,7 @@ io.sockets.on('connection', function (socket) {
 	socket.emit('afficherLesRoomsExistante', rooms)
 
 	socket.on('ajouterRoom', function (nomPartie, passPartie, nbrJoueur, nbrChanson){
-		var newRoom = {id: numRoom, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, play: false, buzz: false};
+		var newRoom = {id: numRoom, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, listeMusique: [], play: false, buzz: false};
 		console.log('................... ' + nbrJoueur + ' ............ ' + nbrChanson);
 		socket.room = numRoom;
 		socket.numRoom = numRoom;
@@ -79,8 +79,9 @@ io.sockets.on('connection', function (socket) {
 	socket.on('playerPret', function(infoTrack){
 		listMusiqueUrl = infoTrack.url;
 		listMusiqueTitle = infoTrack.title;
-		numTrack = Math.floor((Math.random()*(listMusiqueTitle.length-1))+1); 
+		numTrack = Math.floor((Math.random()*(listMusiqueTitle.length-1))+1);
 		console.log(listMusiqueTitle[numTrack]);
+		rooms[socket.room].listeMusique.push(numTrack);
 		rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
 		socket.emit('prochaineMusique', listMusiqueUrl[numTrack], 'pause');
 	});
@@ -109,12 +110,22 @@ io.sockets.on('connection', function (socket) {
 		rooms[socket.room].play = true;
 		console.log(rooms[socket.room].buzz, rooms[socket.room].id);
 		if(reponse.toLowerCase()  == rooms[socket.room].musiqueCourante.toLowerCase() ){
-			numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
-			console.log(listMusiqueTitle[numTrack]);
-			rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
-			usernames[socket.numUser].point += 100;
-			io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
-			io.sockets.to(socket.room).emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
+			if (rooms[socket.room].listeMusique.length != rooms[socket.room].nbrChanson) {
+				do {
+					numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
+					verif = Verif(numTrack, rooms[socket.room].listeMusique);
+				}while(verif);
+				rooms[socket.room].listeMusique.push(numTrack);
+				console.log(listMusiqueTitle[numTrack]);
+				rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
+				usernames[socket.numUser].point += 100;
+				io.sockets.to(socket.room).emit('afficherJoueur', usernames, socket.room);
+				io.sockets.to(socket.room).emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
+			}else{
+				usernames[socket.numUser].point += 100;
+				io.sockets.to(socket.room).emit('message', 'Fin de la partie');
+
+			}
 			
 		}else{
 			io.sockets.to(socket.room).emit('afficheBuzzer');
@@ -137,5 +148,14 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
+	function Verif(a, liste){
+		var x = 0;
+		while(x < liste.length){
+			if(liste[x] == a){
+				return true;
+			}
+			x++;
+		}
+	}
 
 });
