@@ -70,7 +70,6 @@ var formulaire = {
 
     $("#choisirNbrJoueur img").click(function () {
       var obj = $(this);
-      var alt = parseInt(obj.attr('alt'))+1;
 
       $("#choisirNbrJoueur img").unbind('mouseenter').unbind('mouseleave');
       $("#choisirNbrJoueur").unbind("mouseleave");
@@ -79,6 +78,7 @@ var formulaire = {
       room.params.nomPartie = $("input[name=nomPartie]").val();
       room.params.passPartie = $("input[name=passPartie]").val();
       room.params.nbrChanson = parseInt($("#amount").val());
+      room.params.nbrJoueur = parseInt(obj.attr('alt'))+1;
 
       $("body").append("<div id='saisirEmailJoueur'></div>");
       room.creerRoom();

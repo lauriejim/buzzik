@@ -32,6 +32,7 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('ajouterRoom', function (nomPartie, passPartie, nbrJoueur, nbrChanson){
 		var newRoom = {id: numRoom, nom: nomPartie, motDePasse: passPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, play: false, buzz: false};
+		console.log('................... ' + nbrJoueur + ' ............ ' + nbrChanson);
 		socket.room = numRoom;
 		socket.numRoom = numRoom;
 		rooms[socket.numRoom] = newRoom;
@@ -44,18 +45,29 @@ io.sockets.on('connection', function (socket) {
 	socket.on('rejoindreRoom', function(room, motDePasse, nom){
 		if (rooms[room] != null) {
 			if (rooms[room].motDePasse == motDePasse) {
-				socket.join(room);
-				socket.room = room;
-				socket.numUser = numUser;
-				usernames[socket.numUser] = {
-					id : numUser,
-					user : nom,
-					point : 0,
-					room : rooms[room].id
-				};
-				socket.emit('roomRejoin');
-				socket.broadcast.to(socket.room).emit('refreshScrore');
-				numUser++;
+				var nbrPlayerPartie = 0;
+				for (k in usernames) {
+					if (usernames[k].room == rooms[room].id) {
+						nbrPlayerPartie++;
+					}
+				}
+				console.log('.....................' + nbrPlayerPartie + '...................' +rooms[room].nbrJoueur);
+				if (nbrPlayerPartie < rooms[room].nbrJoueur) {
+					socket.join(room);
+					socket.room = room;
+					socket.numUser = numUser;
+					usernames[socket.numUser] = {
+						id : numUser,
+						user : nom,
+						point : 0,
+						room : rooms[room].id
+					};
+					socket.emit('roomRejoin');
+					socket.broadcast.to(socket.room).emit('refreshScrore');
+					numUser++;
+				}else{
+					socket.emit('message', 'La partie est pleine');
+				}
 			}else{
 				socket.emit('message', 'Mauvais mot de passe');
 			}
