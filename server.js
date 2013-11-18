@@ -91,9 +91,19 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('musiqueFini', function(){
-		numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
-		console.log(listMusiqueTitle[numTrack])
-		socket.emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
+		if (rooms[socket.room].listeMusique.length != rooms[socket.room].nbrChanson) {
+			do {
+				numTrack = Math.floor((Math.random()*(listMusiqueUrl.length-1))+1);
+				verif = Verif(numTrack, rooms[socket.room].listeMusique);
+			}while(verif);
+			rooms[socket.room].listeMusique.push(numTrack);
+			console.log(listMusiqueTitle[numTrack]);
+			rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
+			io.sockets.to(socket.room).emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
+		}else{
+			io.sockets.to(socket.room).emit('message', 'Fin de la partie');
+			socket.broadcast.to(socket.room).emit('roomDelete');
+		}
 	});
 
 	socket.on('buzz', function() {
@@ -123,8 +133,7 @@ io.sockets.on('connection', function (socket) {
 				io.sockets.to(socket.room).emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
 			}else{
 				usernames[socket.numUser].point += 100;
-				io.sockets.to(socket.room).emit('message', 'Fin de la partie');
-
+				io.sockets.to(socket.room).emit('roomDelete');
 			}
 			
 		}else{
