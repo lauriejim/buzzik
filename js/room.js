@@ -8,6 +8,7 @@ var room = {
     titre : '',
     listMusiqueUrl: '',
     listMusiqueTitle : '',
+    listeMusique : '',
 
     emitBuzzed : function () {},
     onBuzzed : function () {},
@@ -19,7 +20,8 @@ var room = {
     roomJoined : function () {},
     musiqueLoaded : function () {},
     roomListed : function () {},
-    playerListed : function () {}
+    playerListed : function () {},
+    musiqueListed: function () {}
   },
 
   init : function (options) {
@@ -32,7 +34,8 @@ var room = {
   },
 
   rejoindreRoom : function (room){
-    socket.emit('rejoindreRoom', room, prompt('Mot de passe'), prompt('nom'));
+    console.log("Room n°"+room);
+    connect(room);
   },
 
   roomAjoute : function () {
@@ -50,8 +53,13 @@ var room = {
     this.params.playerListed.call(this);
   },
 
+  afficherMusique : function () {
+    this.params.musiqueListed.call(this);
+  },
+
   emitBuzz : function () {
     socket.emit('buzz');
+    console.log("emitbuzz");
   },
 
   valideBuzz : function () {
@@ -94,25 +102,25 @@ var room = {
   },
 
   creerRoom : function () {
-    $("#reglages").remove();
+    $("#all").fadeOut().hide();
 
-    alert("Créér une room de "+room.params.nbrJoueur+" joueur(s) au nom de "+room.params.nomPartie+" sur "+room.params.nbrChanson+" chansons !");
-
-    /***************************************/
-
-    socket.emit('ajouterRoom', room.params.nomPartie, room.params.passPartie, room.params.nbrJoueur, room.params.nbrChanson);
+    //alert("Créér une room de "+room.params.nbrJoueur+" joueur(s) au nom de "+room.params.nomPartie+" sur "+room.params.nbrChanson+" chansons !");
 
     /***************************************/
 
-    function GetPlayList(a, b){
+    socket.emit('ajouterRoom', room.params.nomPartie, room.params.nbrJoueur, room.params.nbrChanson);
+
+    /***************************************/
+
+    function GetPlayList(a, b, c, d){
       var playListUrl = a.split(',');
       var playListTitle = b.split(',');
-      $('body').load("template/player.html", function () {
-        document.getElementById('player').volume = 0.1;
-        $('#player').on('ended', function() {
-          socket.emit('musiqueFini');
-        });
-        socket.emit('playerPret', {url: playListUrl, title: playListTitle});
+      var playListArt = c.split(',');
+      var playListCov = d.split(',');
+      $('#all').load("template/jeu.html", function(){
+        $("#all").fadeIn().show();
+        $('link[rel=stylesheet]:last-of-type').attr("href", "css/jeu.css");
+        socket.emit('playerPret', {url: playListUrl, title: playListTitle, artist: playListArt, cover: playListCov});
       });
     }
 
@@ -121,8 +129,12 @@ var room = {
             if (typeof(o[i])=="object") {
               console.log(o[i].preview);
               console.log(o[i].title);
+              console.log(o[i].artist.name);
+              console.log(o[i].album.cover);
               room.params.listMusiqueUrl = room.params.listMusiqueUrl + "," + o[i].preview;
               room.params.listMusiqueTitle = room.params.listMusiqueTitle + "," + o[i].title;
+              room.params.listMusiqueArtist = room.params.listMusiqueArtist + "," + o[i].artist.name;
+              room.params.listMusiqueCover = room.params.listMusiqueCover + "," + o[i].album.cover;
             }
         }
     }
@@ -140,8 +152,128 @@ var room = {
       //Je récupére l'objet contenant la liste objet de chaque musique
       GetUrlObjet(response.tracks.data);
       //Je transforme mes bojets en deux tableau urlMP3 et Titre
-      GetPlayList(room.params.listMusiqueUrl, room.params.listMusiqueTitle)
+      GetPlayList(room.params.listMusiqueUrl, room.params.listMusiqueTitle, room.params.listMusiqueArtist, room.params.listMusiqueCover)
     });
   }
 
 }
+  
+
+function connect(room){
+
+      socket.emit('rejoindreRoom', room, prompt('nom'));
+      return false;
+      FB.init({
+        appId      : '205528932959370', // App ID
+        status     : true, // check login status
+        cookie     : true, // enable cookies to allow the server to access the session
+        xfbml      : true  // parse XFBML
+      });
+
+      // Get url parameters
+      var parameters = window.location.pathname.split("-");
+      var idRoom = room;
+      //var email = parameters[2].replace(".html", "");
+      /*$.ajax({
+        type: "POST",
+        url: "../verifierParty.php",
+        data: { idRoom: idRoom, email: email}
+      }).done(function( data ) {
+        if(data == 1){*/
+          // Continue, all is good
+            FB.getLoginStatus(function(response)
+            {
+              if(response.status === 'connected'){
+              // connected
+              FB.api('/me', function(userInfo) {
+                  console.log(userInfo);
+                  // Get all user informations
+                  var emailUser = userInfo.email;
+                  var prenomUser = userInfo.first_name;
+                  var nomUser = userInfo.last_name;
+                  var avatarUser = "http://graph.facebook.com/"+userInfo.username+"/picture";
+                  
+                  var paysUser = "";
+
+                  var ageUser = userInfo.birthday;
+
+                  // If the user isn't subscribed, we subscribe him else we connect him
+                  $.post("connect.php", { idRoom: idRoom, emailUser: emailUser, prenomUser: prenomUser, nomUser: nomUser, avatarUser: avatarUser, paysUser: paysUser, ageUser: ageUser }, function(data){
+                      data = eval('(' + data + ')');
+                      if(data.response == "ok" || data.response == "subscribe"){
+                        // Continue, we can show the buzzer
+                        /*data.buzzer = eval('(' + data.buzzer + ')');
+                        var nomBuzzer = data.buzzer.nomBuzzer;
+                        var sonnerieBuzzer = data.buzzer.sonnerieBuzzer;*/
+
+                        var nom = prenomUser+' '+nomUser;
+
+                        socket.emit('rejoindreRoom', room, nom);
+                      }
+                      else{
+                        // There was a problem, stop the script
+                        return;
+                      }
+                   });
+                });
+              }else if(response.status === 'not_authorized'){
+              // not_authorized
+              login();
+              }else{
+              // not_logged_in
+              login();
+              
+              }
+            });
+
+          function login(_self) {
+            var urlRedirect = document.URL;
+            window.location = "https://m.facebook.com/dialog/oauth?client_id=205528932959370&response_type=code&redirect_uri=" + urlRedirect + "&scope=email,user_birthday";
+              /*FB.login(function(response) {
+                alert(response);
+                if (response.authResponse) {
+                  console.log(response);
+
+                      // connected
+                    FB.api('/me', function(userInfo) {
+                      console.log(userInfo);
+                      // Get all user informations
+                      var emailUser = userInfo.email;
+                      var prenomUser = userInfo.first_name;
+                      var nomUser = userInfo.last_name;
+                      var avatarUser = "http://graph.facebook.com/"+userInfo.username+"/picture";
+                      var paysUser = userInfo.location.name.split(",")[1];
+                      var ageUser = userInfo.birthday;
+
+                      // If the user isn't subscribed, we subscribe him else we connect him
+                      $.post("connect.php", { idRoom: idRoom, emailUser: emailUser, prenomUser: prenomUser, nomUser: nomUser, avatarUser: avatarUser, paysUser: paysUser, ageUser: ageUser }, function(data){
+                        data = eval('(' + data + ')');
+                        if(data.response == "ok" || data.response == "subscribe"){
+                          // Continue, we can show the buzzer
+                          /*data.buzzer = eval('(' + data.buzzer + ')');
+                          var nomBuzzer = data.buzzer.nomBuzzer;
+                          var sonnerieBuzzer = data.buzzer.sonnerieBuzzer;*/
+                          /*var nom = prenomUser+' '+nomUser;
+
+                          socket.emit('rejoindreRoom', room, nom);
+                        }
+                        else{
+                          // There was a problem, stop the script
+                          return;
+                        }
+                       });
+                  });
+                } else {
+                      // cancelled
+                  }
+              },{scope: 'email,user_birthday'}); */
+          }
+
+        /*}
+        else{
+          // Oups, there are a little problem this email isn't associated to this party
+          document.location.href= "./" 
+        }
+      });*/
+  console.log("FB Connect");
+}  

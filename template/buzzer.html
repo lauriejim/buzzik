@@ -1,12 +1,22 @@
-<div id="listeJoueur"></div>
+	<div class="pure-g-r container">
+	    <div class="pure-u-1">
+		    
+		    <div>
+			    <a id="buzzer">
+			    	<p>BUZZ</p>
+			    </a>
+			</div>    
+	    </div>	
+	</div>
+	<div class="pure-g-r bottom">
+		<div class="bg_bottom">
+		    <div class="pure-u-1 manche">
+		    	<h2>MON SCORE</h2>
+		    </div>	
+		    <div class="pure-u-1 categorie">
+		    	<div id="monScore"></div>
+		    </div>
+		</div>    
+	</div>
+	<script type="text/javascript" src="js/pace.js"></script>
 
-<div id="buzzer"></div>
-
-<div id="monScore"></div>
-
-<script type="text/javascript">
-$('#'+room.params.buzzer).on('click', function(e){
-	e.preventDefault();
-	room.emitBuzz();
-});
-</script>

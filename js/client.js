@@ -10,13 +10,14 @@ socket.on('connect', function () {
     titre : 'title',
     listeAllJoueur: 'listeAllJoueur',
     listeJoueur : 'listeJoueur',
+    listeMusique : 'listeMusique',
     monScore : 'monScore',
 
     roomListed : function () {
       $('#'+room.params.affichage).empty();
       for (i in room.rooms) {
         if (room.rooms[i] != null) {
-          $('#'+room.params.affichage).append('<div><a href="#" onclick="room.rejoindreRoom(\''+room.rooms[i].id+'\')">' + room.rooms[i].nom + '</a></div>');
+          $('#'+room.params.affichage).append('<div><a href="./?room='+room.rooms[i].id+'">' + room.rooms[i].nom + '</a></div>');
         }
       }
     },
@@ -25,20 +26,31 @@ socket.on('connect', function () {
       
       console.log(room.monId);
 
-
+      var html = "", tour = 0;
       var element = document.getElementById(room.params.listeAllJoueur);
       if (typeof element != 'undefined' && element != null) {
         $('#'+room.params.listeAllJoueur).empty();
         for (i in room.usernames) {
           if (room.usernames[i] != null) {
             if (room.usernames[i].room == room.room) {
-              $('#'+room.params.listeAllJoueur).append('Nom : '+room.usernames[i].user+' Point : '+room.usernames[i].point+'<br>');
-            }
+              html += '<li class="online"><img src="images/avatar_example.png" /><h3>'+room.usernames[i].user+'</h3><p>'+room.usernames[i].point+'</p></li>';
+              tour++;
+            }  
           }
         }
-      }
 
-      element = document.getElementById(room.params.listeJoueur);
+        var diff = 4-tour;
+        console.log(diff);
+        for(var i=0; i<diff; i++){
+          html += '<li class="online"><img src="images/avatar_example.png" /><h3>Non connecté</h3><p>0</p></li>';
+        }
+
+        $('#'+room.params.listeAllJoueur).html(html);
+
+      }
+      console.log(room.params.listeJoueur);
+      element = $("#"+room.params.listeJoueur);
+      console.log(element);
       if (typeof element != 'undefined' && element != null) {
         $('#'+room.params.listeJoueur).empty();
         for (j in room.usernames) {
@@ -47,18 +59,34 @@ socket.on('connect', function () {
               $('#'+room.params.listeJoueur).append('Nom : '+room.usernames[j].user+' Point : '+room.usernames[j].point+'<br>');
             }
             if (j == room.monId) {
-              console.log($('#'+room.params.monScore));
-              $('#'+room.params.monScore).empty();
-              $('#'+room.params.monScore).append('Point : '+room.usernames[room.monId].point);
+              console.log(j, room.monId, room.usernames[j].point);
+              var idScore = "#"+room.params.monScore;
+              $(idScore).hide().html(room.usernames[j].point).fadeIn();
+              /*setTimeout(function(){
+                 $(idScore).hide().html(room.usernames[j].point).fadeIn();
+              }, 1000)*/
             }
           }
         }
       }
     },
 
+    musiqueListed : function () {
+      var html = "";
+      $('#'+room.params.listeMusique).empty();
+      for (m = room.listeMusique.length-1 ; m >= 0 ; m--) {
+        html += '<li><img src="'+room.listeMusique[m].cover+'" /><p><strong>'+room.listeMusique[m].artist+'</strong><br>'+room.listeMusique[m].title+'</p></li>';
+      }
+      $('#'+room.params.listeMusique).html(html);
+
+    },
+
+
     emitBuzzed : function () {
-      $('body').load("template/formulaire.html", function () {
-        $('#'+room.params.titre).focus();
+      $('#all').load("template/formulaire.html", function () {
+        setTimeout(function(){
+           $('#'+room.params.titre).focus();
+        },500);
         $('#'+room.params.form).submit(function (e) {
           e.preventDefault();
           room.envoiReponse($('#'+room.params.titre).val());
@@ -71,7 +99,7 @@ socket.on('connect', function () {
       //$('#'+room.params.buzzer).remove();
       var element = document.getElementById(room.params.player);
       if (typeof element != 'undefined' && element != null) {
-        document.getElementById(room.params.player).pause();
+        player.pause();
       }
     },
 
@@ -84,15 +112,14 @@ socket.on('connect', function () {
     },
 
     appendBuzzer : function () {
-      $('#'+room.params.buzzer).remove();
-      $('body').load("template/buzzer.html", function () {
-        console.log('refreshScrore')
-        socket.emit('refreshScrore');
-      });
+      $('#all').load("template/buzzer.html");
+      $('link[rel=stylesheet]:last-of-type').attr("href", "css/mobile.css");
+      console.log('refreshScrore')
+      socket.emit('refreshScrore');
     },
 
     played : function () {
-      document.getElementById(room.params.player).play();
+      player.play();
     },
 
     roomAdded : function () {
@@ -100,25 +127,26 @@ socket.on('connect', function () {
     },
 
     roomJoined : function () {
-      $('body').load("template/buzzer.html", function () {
-        console.log('refreshScrore')
-        socket.emit('refreshScrore');
-      });
+      $('#all').load("template/buzzer.html");
+      $('link[rel=stylesheet]:last-of-type').attr("href", "css/mobile.css");
+      console.log('refreshScrore')
+      socket.emit('refreshScrore');
     },
 
     musiqueLoaded : function () {
-      document.getElementById(room.params.player).src = room.numTrack;
-      if (room.etat == "play") {
-        document.getElementById(room.params.player).play();
-        document.getElementById(room.params.player).addEventListener('ended', function() {
-          socket.emit('musiqueFini');
-        });
+      $("path").fadeOut(500, function(){ $(this).remove(); });
+      player.setFile(room.numTrack);
+      if(room.etat == "play") {
+        player.play();
       }
     }
   }); 
+
   console.log(typeof location.search);
-  if (typeof location.search != '' && location.search != ''){
-    var getRoom = location.search.split('=');
+  if (typeof window.location.search != '' && window.location.search != ''){
+    var getRoom = window.location.search.split('=');
+    getRoom[1] = parseInt(getRoom[1]);
+
     if(!isNaN(getRoom[1]) && getRoom[1]!=''){
       room.rejoindreRoom(getRoom[1]);
     }
@@ -128,8 +156,6 @@ socket.on('connect', function () {
 
 
 });
-
-
 
 
 socket.on('message', function (message) {
@@ -178,6 +204,15 @@ socket.on('refreshScrore', function () {
   socket.emit('refreshScrore');
 });
 
-socket.on('roomDelete', function () {
-  document.location.href="index.html"; 
+socket.on('refreshListesInfos', function (liste) {
+  console.log('refreshListesInfos', liste)
+  room.listeMusique = liste;
+  room.afficherMusique();
 });
+
+socket.on('roomDelete', function () {
+  document.location.href="index.php"; 
+});
+
+
+

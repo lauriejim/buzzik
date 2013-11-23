@@ -1,22 +1,16 @@
 var formulaire = {
 
   afficherFomulaire : function () {
-
-    $("#reglages").append("<h2>Réglages de la partie</h2>");
-    $("#reglages").append("<input type='text' placeholder='Nom de la partie' name='nomPartie' required /><br><br>");
-    $("#reglages").append("<input type='text' placeholder='Mot de passe' name='passPartie' required /><br><br>");
-    $("#reglages").append("<b>Nombre de chansons ?</b><br><input type='text' id='amount' style='border: 0;  font-weight: bold;' /><br><div id='nbrChanson'></div>");
-    $("#reglages").append("<br><br><b>Nombre de joueur ?</b><br><div id='choisirNbrJoueur'></div><br>");
-    $( "#nbrChanson" ).slider({
+    $( "#nbrChanson2" ).slider({
       range: "min",
-      value: 5,
+      value: 15,
       min: 2,
-      max: 10,
+      max: 50,
       slide: function (event, ui) {
-        $("#amount").val(ui.value);
+        $("#amount2").val(ui.value);
       }
     });
-    $("#amount").val($( "#nbrChanson" ).slider( "value" ) + " chansons");
+    $("#amount2").val($( "#nbrChanson2" ).slider( "value" ));
     $("#choisirNbrJoueur").load("template/choisirNbrJoueur.html", function(){
       formulaire.choisirNbrJoueur();
     });
@@ -42,11 +36,11 @@ var formulaire = {
 
       var theImg = $("#choisirNbrJoueur img");
       for(var i=0; i<=alt; i++){
-        theImg[i].src = url+"playerYes.png";
+        theImg[i].src = url+"icon_player_hover.png";
       }
 
       for(var w=i; w<theImg.length; w++){
-        theImg[w].src = url+"playerNo.png";
+        theImg[w].src = url+"icon_player.png";
       }
 
     });
@@ -63,25 +57,20 @@ var formulaire = {
       }
 
       var theImg = $("#choisirNbrJoueur img");
-      for(var i=0; i<theImg.length; i++){
-        theImg[i].src = url+"playerNo.png";
+      for(var i=1; i<theImg.length; i++){
+        theImg[i].src = url+"icon_player.png";
       } 
     });
 
     $("#choisirNbrJoueur img").click(function () {
       var obj = $(this);
+      var alt = parseInt(obj.attr('alt'))+1;
+      $("#choisirNbrJoueur").data("nbrjoueur", alt);
+      
 
       $("#choisirNbrJoueur img").unbind('mouseenter').unbind('mouseleave');
       $("#choisirNbrJoueur").unbind("mouseleave");
       $("#choisirNbrJoueur img").unbind("click");
-
-      room.params.nomPartie = $("input[name=nomPartie]").val();
-      room.params.passPartie = $("input[name=passPartie]").val();
-      room.params.nbrChanson = parseInt($("#amount").val());
-      room.params.nbrJoueur = parseInt(obj.attr('alt'))+1;
-
-      $("body").append("<div id='saisirEmailJoueur'></div>");
-      room.creerRoom();
     });
 
   },
