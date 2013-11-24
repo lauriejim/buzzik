@@ -3,8 +3,8 @@ var socket = io.connect('http://localhost:1337');
 socket.on('connect', function () {
 
   room.init({
-    player : 'player',
-    buzzer : 'buzzer',
+    player : '#player',
+    buzzer : '#buzzer',
     affichage : 'rooms',
     form : 'titleform',
     titre : 'title',
@@ -97,7 +97,7 @@ socket.on('connect', function () {
 
     onBuzzed : function () {
       //$('#'+room.params.buzzer).remove();
-      var element = document.getElementById(room.params.player);
+      var element = document.querySelector(room.params.player);
       if (typeof element != 'undefined' && element != null) {
         player.pause();
       }

@@ -43,7 +43,7 @@ var room = {
   },
 
   roomRejoint : function () {
-    var element = document.getElementById(room.params.player);
+    var element = document.querySelector(room.params.player);
     if (typeof element == 'undefined' || element == null) {
       this.params.roomJoined.call(this);
     }
@@ -80,7 +80,7 @@ var room = {
   },
 
   afficherBuzzer : function () {
-    var element = document.getElementById(room.params.player);
+    var element = document.querySelector(room.params.player);
     if (typeof element == 'undefined' || element == null) {
       this.params.appendBuzzer.call(this);
       this.params.playerListed.call(this);
@@ -93,7 +93,7 @@ var room = {
   prochaineMusique : function (numTrack, etat) {
     this.etat = etat;
     this.numTrack = numTrack;
-    var element = document.getElementById(this.params.player);
+    var element = document.querySelector(this.params.player);
     if (typeof element != 'undefined' && element != null) {
       this.params.musiqueLoaded.call(this);
     }else{

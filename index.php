@@ -345,7 +345,7 @@
 		
 		console.log(room.params.nbrJoueur);
 	});
-
+	// Boutton "Commencer la partie"
 	$('a[href=#multiple_player]').on('click', function(e){
 		e.preventDefault();
 		room.params.nomPartie = $("#reglages input[name=nomPartie]").val();
@@ -355,12 +355,13 @@
 		room.creerRoom();
 	});
 
-
+	// Scroll vers la création d'une room
 	$('a[href=#jouer]').on('click', function(e){
 		e.preventDefault();
 		$('html,body').animate({scrollTop: $("#jouer").offset().top},'slow');
 	});
 
+	// Click boutton connection en haut de page
 	$('a[href=#connecter]').on('click', function(e){
 		e.preventDefault();
 		var div = $('.topBar ul:last-of-type');
@@ -377,7 +378,7 @@
 		div.css({left:pourcentage+"%"});
 	});
 
-
+	// Gestion de la jauge de chasson
 	$( "#nbrChanson" ).slider({
 	      range: "min",
 	      value: 15,
@@ -390,6 +391,7 @@
 	$( "#amount" ).val($( "#nbrChanson" ).slider( "value" ));
 	</script>
 	<script>
+		// Detection du buzzer
 		$('#all').on('click','#buzzer', function(e){
 			e.preventDefault();
 			room.emitBuzz();
