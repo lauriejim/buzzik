@@ -17,7 +17,6 @@ var room = {
     appendBuzzer : function () {},
     played : function () {},
     roomAdded : function () {},
-    roomJoined : function () {},
     musiqueLoaded : function () {},
     roomListed : function () {},
     playerListed : function () {},
@@ -45,7 +44,7 @@ var room = {
   roomRejoint : function () {
     var element = document.querySelector(room.params.player);
     if (typeof element == 'undefined' || element == null) {
-      this.params.roomJoined.call(this);
+      this.params.appendBuzzer.call(this);
     }
   },
 

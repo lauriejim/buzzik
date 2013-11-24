@@ -82,6 +82,7 @@
 		pause : function(){
 			this.media.pause();
 			this.property.pause.call(this);
+			socket.emit('pausePartie');
 		},
 
 		end : function(){

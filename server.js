@@ -111,6 +111,12 @@ io.sockets.on('connection', function (socket) {
         rooms[socket.room].buzz = false;
     });
 
+    // Met en pause la partie
+    // désactive le fait de pouvoir buzzer
+    socket.on('pausePartie', function (){
+        rooms[socket.room].play = false;
+        rooms[socket.room].buzz = true;
+    });
     // Fin automatique de la musique si elle n'a pas été trouvé
     // test si il y a encore une musique à jouer pour la partie
     // si 'oui'
