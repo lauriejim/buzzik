@@ -195,7 +195,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('reponse', function(reponse){
         rooms[socket.room].buzz = false;
         rooms[socket.room].play = true;
-        if(reponse.toLowerCase()  == rooms[socket.room].musiqueCourante.toLowerCase() ){
+
+        var pourcentage = compareStr(reponse, rooms[socket.room].musiqueCourante); 
+        if(pourcentage >= 70){ // Si la réponse est à 70% exacte
             if (rooms[socket.room].listeMusique.length != rooms[socket.room].nbrChanson) {
                 
                 var listesInfos = new Array();
@@ -276,4 +278,63 @@ io.sockets.on('connection', function (socket) {
             x++;
         }
     }
+
+    function compareStr(reponseUser, laBonneReponse){
+        var result = 0;
+        var plusGrandChaine = 0;
+
+        // Passage de la réponse en minuscule
+        // De même pour la bonne réponse
+        reponseUser = reponseUser.toLowerCase();
+        laBonneReponse = laBonneReponse.toLowerCase();
+
+        if(reponseUser.length > laBonneReponse.length)
+            plusGrandChaine = reponseUser.length;
+        else
+            plusGrandChaine = laBonneReponse.length;
+
+        // On récupère le nombre de caractère d'écart entre la réponse et la bonne réponse
+        result = levenshteinDistance(reponseUser, laBonneReponse);
+
+        // On mets ça sous forme de pourcentage pour avoir le degré de ressemblance
+        var pourcentage = (plusGrandChaine-result)*100/plusGrandChaine;
+
+        return pourcentage;
+    }
+
+
+    function levenshteinDistance(a, b){
+      if(a.length == 0) return b.length; 
+      if(b.length == 0) return a.length; 
+     
+      var matrix = [];
+     
+      // increment along the first column of each row
+      var i;
+      for(i = 0; i <= b.length; i++){
+        matrix[i] = [i];
+      }
+     
+      // increment each column in the first row
+      var j;
+      for(j = 0; j <= a.length; j++){
+        matrix[0][j] = j;
+      }
+     
+      // Fill in the rest of the matrix
+      for(i = 1; i <= b.length; i++){
+        for(j = 1; j <= a.length; j++){
+          if(b.charAt(i-1) == a.charAt(j-1)){
+            matrix[i][j] = matrix[i-1][j-1];
+          } else {
+            matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, // substitution
+                                    Math.min(matrix[i][j-1] + 1, // insertion
+                                             matrix[i-1][j] + 1)); // deletion
+          }
+        }
+      }
+     
+      return matrix[b.length][a.length];
+    }
+
 });

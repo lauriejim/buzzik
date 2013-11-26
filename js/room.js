@@ -160,9 +160,20 @@ var room = {
       var playListArt = c.split(',');
       var playListCov = d.split(',');
       $('#all').load("template/jeu.html", function(){
-        $("#all").fadeIn().show();
-        $('link[rel=stylesheet]:last-of-type').attr("href", "css/jeu.css");
-        socket.emit('playerPret', {url: playListUrl, title: playListTitle, artist: playListArt, cover: playListCov});
+        
+        setTimeout(function(){
+
+          $.event.trigger({
+            type: "chargementJeu",
+            message: "",
+            time: new Date()
+          });
+
+          $("#all").fadeIn().show();
+          $('link[rel=stylesheet]:last-of-type').attr("href", "css/jeu.css");
+          socket.emit('playerPret', {url: playListUrl, title: playListTitle, artist: playListArt, cover: playListCov});
+
+        }, 500)        
       });
     }
 
@@ -201,6 +212,7 @@ function connect(room){
 
       socket.emit('rejoindreRoom', room, prompt('nom'));
       return false;
+
       FB.init({
         appId      : '205528932959370', // App ID
         status     : true, // check login status

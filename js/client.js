@@ -79,10 +79,10 @@ socket.on('connect', function () {
             if (j == room.monId) {
               console.log(j, room.monId, room.usernames[j].point);
               var idScore = '#'+room.params.monScore;
-              $(idScore).hide().html(room.usernames[j].point).fadeIn();
-              /*setTimeout(function(){
+              //$(idScore).hide().html(room.usernames[j].point).fadeIn();
+              setTimeout(function(){
                  $(idScore).hide().html(room.usernames[j].point).fadeIn();
-              }, 1000)*/
+              }, 1000)
             }
           }
         }
@@ -267,6 +267,13 @@ socket.on('refreshListesInfos', function (liste) {
 // redirige vers la page d'accueil
 socket.on('roomDelete', function () {
   document.location.href="index.php"; 
+});
+
+// Detection du buzzer
+$('#all').on('click','#buzzer', function(e){
+  e.preventDefault();
+  room.emitBuzz();
+  console.log("emit");
 });
 
 
