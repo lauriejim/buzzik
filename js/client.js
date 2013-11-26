@@ -77,11 +77,11 @@ socket.on('connect', function () {
               $(room.params.listeJoueur).append('Nom : '+room.usernames[j].user+' Point : '+room.usernames[j].point+'<br>');
             }
             if (j == room.monId) {
-              console.log(j, room.monId, room.usernames[j].point);
+              var points = room.usernames[j].point;
               var idScore = '#'+room.params.monScore;
               //$(idScore).hide().html(room.usernames[j].point).fadeIn();
               setTimeout(function(){
-                 $(idScore).hide().html(room.usernames[j].point).fadeIn();
+                 $(idScore).hide().html(points).fadeIn();
               }, 1000)
             }
           }
