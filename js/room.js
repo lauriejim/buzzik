@@ -45,8 +45,21 @@ var room = {
 
   // L'utilisateur à bien rejoin une room
   // active le callback pour kill l'accueil
-  roomAjoute : function () {
+  roomAjoute : function (data) {
     this.params.roomAdded.call(this);
+    // Envoi le mail
+    var idRoom = data.idRoom;
+    var listeEmails = data.listeEmails;
+
+
+    $.ajax({
+      type: "POST",
+      url: "sentEmail.php",
+      data: { id : idRoom, listeEmails: listeEmails},
+      success : function(data){
+        alert(data);
+      }
+    })
   },
 
   // L'utilisateur à rejoin une room 
@@ -142,14 +155,15 @@ var room = {
   },
 
   // Création d'une room
-  creerRoom : function () {
+  creerRoom : function (listeEmails) {
     $("#all").fadeOut().hide();
 
+    listeEmails = listeEmails.split(",");
 
     /***************************************/
 
     // Envoie au server des info de la partie pour qu'il crée la room
-    socket.emit('ajouterRoom', room.params.nomPartie, room.params.nbrJoueur, room.params.nbrChanson);
+    socket.emit('ajouterRoom', room.params.nomPartie, room.params.nbrJoueur, room.params.nbrChanson, listeEmails);
 
     /***************************************/
 
@@ -209,9 +223,6 @@ var room = {
   
 // Connection à une room via avec FBconnect
 function connect(room){
-
-      socket.emit('rejoindreRoom', room, prompt('nom'));
-      return false;
 
       FB.init({
         appId      : '205528932959370', // App ID

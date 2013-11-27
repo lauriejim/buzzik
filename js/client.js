@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:1337');
+var socket = io.connect('http://buzzik.local:1337/');
 
 socket.on('connect', function () {
 
@@ -205,8 +205,8 @@ socket.on('afficherLesRoomsExistante', function (rooms) {
 
 // L'ulisateur a créer une room
 // active la fonction de l'obj room qui prépare l'affichage de l'espace de jeux
-socket.on('roomAjoute', function () {
-  room.roomAjoute();
+socket.on('roomAjoute', function (data) {
+  room.roomAjoute(data);
 });
 
 // L'ulisateur a rejoin une room
@@ -273,7 +273,6 @@ socket.on('roomDelete', function () {
 $('#all').on('click','#buzzer', function(e){
   e.preventDefault();
   room.emitBuzz();
-  console.log("emit");
 });
 
 
