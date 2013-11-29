@@ -1,6 +1,8 @@
 var socket = io.connect('http://buzzik.local:1337/');
+var audio = new Audio("sound/banzai.mp3");
 
 socket.on('connect', function () {
+
 
   // Initialisation de la partie ux du jeux
   room.init({
@@ -51,16 +53,15 @@ socket.on('connect', function () {
         for (i in room.usernames) {
           if (room.usernames[i] != null) {
             if (room.usernames[i].room == room.room) {
-              html += '<li class="online"><img src="images/avatar_example.png" /><h3>'+room.usernames[i].user+'</h3><p>'+room.usernames[i].point+'</p></li>';
+              html += '<li class="online"><img class="borderWhite" src="images/avatar_example.png" alt="'+room.usernames[i].id+'" /><h3>'+room.usernames[i].user+'</h3><p>'+room.usernames[i].point+'</p></li>';
               tour++;
             }  
           }
         }
 
         var diff = 4-tour;
-        console.log(diff);
         for(var i=0; i<diff; i++){
-          html += '<li class="online"><img src="images/avatar_example.png" /><h3>Non connecté</h3><p>0</p></li>';
+          html += '<li class="online"><img class="borderWhite" src="images/avatar_example.png" /><h3>Offline</h3><p>0</p></li>';
         }
 
         $(room.params.listeAllJoueur).html(html);
@@ -68,7 +69,6 @@ socket.on('connect', function () {
       }
 
       element = $(room.params.listeJoueur);
-      console.log(element);
       if (typeof element != 'undefined' && element != null) {
         $(room.params.listeJoueur).empty();
         for (j in room.usernames) {
@@ -82,7 +82,7 @@ socket.on('connect', function () {
               //$(idScore).hide().html(room.usernames[j].point).fadeIn();
               setTimeout(function(){
                  $(idScore).hide().html(points).fadeIn();
-              }, 1000)
+              }, 1000);
             }
           }
         }
@@ -124,10 +124,11 @@ socket.on('connect', function () {
     // test l'existence du player
     // si 'oui'
       // mettre en pause la musique
-    onBuzzed : function () {
+    onBuzzed : function (data) {
       //$('#'+room.params.buzzer).remove();
       var element = document.querySelector(room.params.player);
       if (typeof element != 'undefined' && element != null) {
+        $("img[alt="+data+"]").removeClass("borderWhite").addClass("borderRed");
         player.pause();
       }
     },
@@ -162,11 +163,14 @@ socket.on('connect', function () {
 
     // Musique bien chargé
     musiqueLoaded : function () {
-      $("path").fadeOut(500, function(){ $(this).remove(); });
       player.setFile(room.numTrack);
       if(room.etat == "play") {
         player.play();
       }
+
+      setTimeout(function(){
+        $("path").remove();
+      }, 500);  
     }
   }); 
 
@@ -224,17 +228,21 @@ socket.on('afficherJoueur', function (usernames, rooms, monId) {
   room.monId = monId;
   room.afficherJoueur();
 })
-
 // Changement de musique du player (INT, STRING)
 // active la fonction de l'obj room qui change la musique du player
 socket.on('prochaineMusique', function(numTrack, etat){
-  room.prochaineMusique(numTrack, etat)
+  room.prochaineMusique(numTrack, etat);
 });
 
 // Reception d'un buz dans la room
 // active la fonction de l'objet room qui met en pause le player
-socket.on('buzz', function () {
-  room.onBuzz();
+socket.on('buzz', function (data) {
+  room.onBuzz(data);
+  if(audio != null){
+    audio.play();
+    audio = null;
+  }
+  
 });
 
 // Validation du buzz
