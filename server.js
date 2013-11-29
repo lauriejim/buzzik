@@ -41,7 +41,7 @@ io.sockets.on('connection', function (socket) {
     // ajout à la room céé
     // envoie à l'utilisateur qu'il vient de créer un room
     // envoie aux utilisateurs qui n'ont pas rejoin de partie, qu'une nouvelle vien d'être créé 
-	socket.on('ajouterRoom', function (nomPartie, nbrJoueur, nbrChanson, listeEmails){
+	socket.on('ajouterRoom', function (nomPartie, nbrJoueur, nbrChanson){
 		var newRoom = {id: numRoom, nom: nomPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, listeMusique: [], play: false, buzz: true};
         socket.room = numRoom;
         socket.numRoom = numRoom;
@@ -49,7 +49,7 @@ io.sockets.on('connection', function (socket) {
         socket.join(socket.room);
 
         /* Envoi des emails aux personnes */
-        socket.emit('roomAjoute', { idRoom : socket.numRoom, listeEmails : listeEmails });
+        socket.emit('roomAjoute', { idRoom : socket.numRoom});
         socket.broadcast.to('accueil').emit('afficherLesRoomsExistante', rooms);
         numRoom++;
 	});
