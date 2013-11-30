@@ -10,6 +10,7 @@ app.use("/img", express.static(__dirname + '/img'));
 app.use("/images", express.static(__dirname + '/images'));
 app.use("/font", express.static(__dirname + '/font'));
 app.use("/template", express.static(__dirname + '/template'));
+app.use("/video", express.static(__dirname + '/video'));
 
 
 app.get('/', function(req, res) {

@@ -241,7 +241,7 @@ socket.on('refreshListesInfos', function (liste) {
 // Detection de fin ou suppression de partie
 // redirige vers la page d'accueil
 socket.on('roomDelete', function () {
-  document.location.href="index.php"; 
+  document.location.href="/"; 
 });
 
 // Detection du buzzer
