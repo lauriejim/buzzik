@@ -25,7 +25,6 @@ var buffer = {
 			this.params.diametre = Math.ceil(this.params.diametre);
 
 		this.paper = Raphael("buffer");
-		console.log("Diamètre:"+this.params.diametre);
 		this.paper.setViewBox(0,0, this.params.diametre, this.params.diametre, true);
 		this.paper.setSize('100%', '100%');
 

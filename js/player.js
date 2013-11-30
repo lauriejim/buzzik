@@ -19,7 +19,6 @@ var player = {
 		this.media = $(this.property.audio)[0];
 		this.media.src = this.params.file;
 		player.property.initied.call(this);
-		console.log(this.media);
 	},
 
 	load : function(){
@@ -52,7 +51,6 @@ var player = {
 	},
 
 	clic : function(){
-		console.log("click");
 		var ter = this.media.paused?this.play():this.pause();
 	}
 

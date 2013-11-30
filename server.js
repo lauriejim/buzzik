@@ -1,18 +1,28 @@
-var express = require('express')
-  , app = express()
-  , http = require('http')
-  , server = http.createServer(app)
-  , io = require('socket.io').listen(server);
+var http = require("http");
+var express = require("express");
+var app = express();
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
+app.use("/css", express.static(__dirname + '/css'));
+app.use("/js", express.static(__dirname + '/js'));
+app.use("/img", express.static(__dirname + '/img'));
+app.use("/images", express.static(__dirname + '/images'));
+app.use("/font", express.static(__dirname + '/font'));
+app.use("/template", express.static(__dirname + '/template'));
+
+
+app.get('/', function(req, res) {
+  res.render('index.ejs');
+});
 
 server.listen(1337);
 
+// fonction timer
 var timerSong;
 
-// liste des utilisateur
+// liste des utilisateur et rooms
 var usernames = new Array();
-
-// liste des rooms disponible
 var rooms = new Array();
 
 // info musique
@@ -34,13 +44,10 @@ io.sockets.on('connection', function (socket) {
 	socket.emit('afficherLesRoomsExistante', rooms)
 
     // Création de la room (STRING, INT, INT)
-    // créé un nouvel obj room
-    // mise en session du num de la room
-    // ajout de l'obj room à la liste des rooms
-    // ajout à la room céé
-    // envoie à l'utilisateur qu'il vient de créer un room
-    // envoie aux utilisateurs qui n'ont pas rejoin de partie, qu'une nouvelle vien d'être créé 
 	socket.on('ajouterRoom', function (nomPartie, nbrJoueur, nbrChanson){
+        console.log('/////////////////////////////////');
+        console.log('///// Une partie à été crée /////');
+        console.log('/////////////////////////////////');
 		var newRoom = {id: numRoom, nom: nomPartie, nbrJoueur: nbrJoueur, nbrChanson: nbrChanson, listeMusique: [], play: false, buzz: true};
         socket.room = numRoom;
         socket.numRoom = numRoom;
@@ -54,15 +61,6 @@ io.sockets.on('connection', function (socket) {
 	});
 
     // Rejoindre une room (INT, STRING)
-    // test si la room que l'on essaye de rejoindre existe
-    // test si la room est libre
-        // calcul du nombre d'utilisateur lié à la room
-    // au 'oui' aux deux tests alors ajout d'un utilisateur à la liste des utilisateurs
-    // ajout à la room
-    // mise en sesion du num de la room
-    // envoie à l'utilisateur qu'il vient de se connecter
-    // envoie au utilisateur de la room qu'un nouvel utilisateur vient de se connecter
-    // si 'non' à un des test, message d'erreur
 	socket.on('rejoindreRoom', function(room, nom){
 		if (rooms[room] != null) {
             var nbrPlayerPartie = 0;
@@ -93,10 +91,6 @@ io.sockets.on('connection', function (socket) {
 	});
 
     // Player est prêt à être lancé (ARRAY)
-    // récupération des infos des musique (mp3, titre, artiste, image)
-    // selection de la première musique - aléatoire entre 1 et le nonbre de musique de la playlist
-    // ajoute l'information à la room de la musique courante et que cette musique à été joué
-    // envoie l'info de la musique choisi à l'utilisateur
 	socket.on('playerPret', function(infoTrack){
         listMusiqueUrl = infoTrack.url;
         listMusiqueTitle = infoTrack.title;
@@ -105,7 +99,6 @@ io.sockets.on('connection', function (socket) {
         numTrack = Math.floor((Math.random()*(listMusiqueTitle.length-1))+1);
         rooms[socket.room].listeMusique.push(numTrack);
         rooms[socket.room].musiqueCourante = listMusiqueTitle[numTrack];
-        console.log(rooms[socket.room].musiqueCourante+" / "+listMusiqueArtist[numTrack]);
         socket.emit('prochaineMusique', listMusiqueUrl[numTrack], 'pause');
         rooms[socket.room].timer = 0;
     });
@@ -127,18 +120,8 @@ io.sockets.on('connection', function (socket) {
         rooms[socket.room].buzz = true;
         clearInterval(timerSong);
     });
-    // Fin automatique de la musique si elle n'a pas été trouvé
-    // test si il y a encore une musique à jouer pour la partie
-    // si 'oui'
-        // ajout de la musique fini à la liste des musiques jouées
-        // envoie au player d'actualiser l'affichage des musiques jouées
 
-        // choisir une nouvelle musique qui n'a pas été joué
-        // ajout de la nouvelle musique à la liste des musiques jouées
-        // ajout de la nouvelle musique courante à la room
-        // envoie au player de charger la nouvelle musique
-    //si 'non'
-        // envoie aux utilisateur de la room que la partie est terminé
+    // Fin automatique de la musique si elle n'a pas été trouvé
     socket.on('musiqueFini', function(){
         if (rooms[socket.room].listeMusique.length != rooms[socket.room].nbrChanson) {
             var listesInfos = new Array();
@@ -166,13 +149,6 @@ io.sockets.on('connection', function (socket) {
     });
 
     // Reception d'un buzz
-    // test si un utilisateur à pas déjà buzzé
-    // si 'oui'
-        // ne rien faire
-    // si 'non'
-        // bloquer le buzzer
-        // envoie aux autres utilisateur qu'un utilisateur à buzzé
-        // envoie à l'utilisateur qu'il a bien buzzé
     socket.on('buzz', function() {
         if (!rooms[socket.room].buzz && rooms[socket.room].play) {
             rooms[socket.room].buzz = true;
@@ -183,26 +159,6 @@ io.sockets.on('connection', function (socket) {
     });
 
     // Reception d'une réponse
-    // réactiver le buzzer
-    // test entre la réponse et le titre de la musique courante
-    // si 'oui'
-        // test si c'est la dernière musique
-        // si 'non'
-            // ajout de la musique fini à la liste des musiques jouées
-            // envoie au player d'actualiser l'affichage des musiques jouées
-
-            // choisir une nouvelle musique qui n'a pas été joué
-            // ajout de la nouvelle musique à la liste des musiques jouées
-            // ajout de la nouvelle musique courante à la room
-            // ajout des points a l'utilisateur
-            // envoie aux utilisateur de réactualiser les scores
-            // envoie au player de charger la nouvelle musique
-        // si 'oui'
-            // ajout des points
-            // envoie un alert de fin de partie 
-            // envoie le fait que la room se delete
-    // si 'non'
-        // réaficher les buzzer
     socket.on('reponse', function(reponse){
         rooms[socket.room].buzz = false;
         rooms[socket.room].play = true;
@@ -261,18 +217,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     // Deconnection
-    // si un utilisateur
-        // rejoindre la room accueil
-        // supression de l'utilisateur de la liste des utilisateurs
-        // supression de sa variable de session 
-        // envoie aux utilisateur de refresh les scores
-    // si une room
-        // rejoindre la room accueil
-        // supression de la room de la liste des rooms
-        // envoie aux utilisateur de la room qu'elle à était suprimmer
-        // envoie à la room accueil d'actualiser les rooms existentes
     socket.on('disconnect', function () {
-        console.log(socket);
             if (socket.numUser != undefined) {
                     socket.join("accueil");
                     delete usernames[socket.numUser];
@@ -280,6 +225,9 @@ io.sockets.on('connection', function (socket) {
                     socket.broadcast.to(socket.room).emit('refreshScrore');
             }
             if (socket.numRoom != undefined) {
+                console.log('/////////////////////////////////////');
+                console.log('///// Une partie à été terminée /////');
+                console.log('/////////////////////////////////////');
                     clearInterval(timerSong);
                     socket.join("accueil");
                     delete rooms[socket.numRoom];
@@ -290,8 +238,6 @@ io.sockets.on('connection', function (socket) {
     });
 
     // Fonction de vérification (INT, ARRAY)
-    // test si le nouveau chiffre aléatoire est déjà présent dans le tableau
-    // des musiques déjà jouées
     function Verif(a, liste)
     {
         var x = 0;

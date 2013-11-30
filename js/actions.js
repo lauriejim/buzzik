@@ -23,19 +23,15 @@ jQuery(document).on("chargementJeu", function (evt) {
 			$("#button").on('click', function(event){
 				player.clic(); 		
 			});
-			console.log("ajout click")
 
 			$(document).keydown(function(e){
 				if(e.keyCode == 32)
 					player.clic();
 			});
-			console.log("ajout keydown");
 		},
 		loaded : function(){
-			console.log("loaded");
 		},
 		playing : function(){
-			console.log("playing");
 
 			// Toutes les  84 ms ont mets à jour la position du curseur
 			timerPlayer = setInterval(function(){
@@ -55,7 +51,6 @@ jQuery(document).on("chargementJeu", function (evt) {
 			$(player.property.button).addClass("playing");
 		},
 		pause : function(){
-			console.log("pause");
 			$(player.property.audio).addClass('play');
 			$(player.property.button).addClass('off');
 			$(player.property.button).removeClass("playing");
@@ -64,7 +59,6 @@ jQuery(document).on("chargementJeu", function (evt) {
 			$("#timer").removeClass("caSentLaFin");
 		},
 		ended : function(){
-			console.log("Terminé");
 			$("#timer").removeClass("caSentLaFin");
 			$("#timer").html('0');
 			setTimeout(function(){

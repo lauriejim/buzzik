@@ -29,22 +29,7 @@ socket.on('connect', function () {
       }
     },
 
-    // Liste les joueurs de la partie
-    // et met a jour les scores
-    // intialise des variables
-    // récupére l'élément listeAllJoueur
-    // test si il existe
-    // si 'oui'
-      // vider l'élément
-      // liste chaque joueur si il fait bien partie de la room
-      // si tout les joueurs ne son aps connecter alors afficher un utilisateur non connecté
-    //si 'non'
-      // récupéré l'élément listeJoueur
-      // test si il existe
-      //si 'oui'
-        // vider l'élément 
-        // afficher tout les joueurs de la room sauf l'utilisateur
-        // afficher le score de l'utilisateur dans l'élément monScore
+    // Fait la list des players
     playerListed : function () {
       var html = "", tour = 0;
       var element = $(room.params.listeAllJoueur);
@@ -79,7 +64,6 @@ socket.on('connect', function () {
             if (j == room.monId) {
               var points = room.usernames[j].point;
               var idScore = '#'+room.params.monScore;
-              //$(idScore).hide().html(room.usernames[j].point).fadeIn();
               setTimeout(function(){
                  $(idScore).hide().html(points).fadeIn();
               }, 1000);
@@ -90,9 +74,6 @@ socket.on('connect', function () {
     },
 
     // Afficher les musiques jouées
-    // vide l'element 
-    // liste les musiques
-    // puis les affiche
     musiqueListed : function () {
       var html = "";
       $(room.params.listeMusique).empty();
@@ -104,9 +85,6 @@ socket.on('connect', function () {
     },
 
     // Affichage du formulaire de réponse
-    // affiche le formulaire
-    // focus du champ de réponse
-    // écoute de l'envoie de la réponse
     emitBuzzed : function () {
       $('#all').load("template/formulaire.html", function () {
         setTimeout(function(){
@@ -121,11 +99,7 @@ socket.on('connect', function () {
     },
 
     // Pause du player lors d'un buzz
-    // test l'existence du player
-    // si 'oui'
-      // mettre en pause la musique
     onBuzzed : function (data) {
-      //$('#'+room.params.buzzer).remove();
       var element = document.querySelector(room.params.player);
       if (typeof element != 'undefined' && element != null) {
         $("img[alt="+data+"]").removeClass("borderWhite").addClass("borderRed");
@@ -156,7 +130,6 @@ socket.on('connect', function () {
     },
 
     // Utilisateur bien connecter à la room
-    // suppresion de l'élement accueil
     roomAdded : function () {
       $('#accueil').remove();
     },
@@ -175,11 +148,6 @@ socket.on('connect', function () {
   }); 
 
   // Detection d'url pour rejoindre une room
-  // test existe ?room=:id
-  // si 'oui'
-    // rejoindre cette room
-  // si 'non'
-    // afficher l'accueil
   if (typeof window.location.search != '' && window.location.search != ''){
     var getRoom = window.location.search.split('=');
     getRoom[1] = parseInt(getRoom[1]);
@@ -196,7 +164,6 @@ socket.on('connect', function () {
 
 
 // Afficher un message
-// alert du message reçus
 socket.on('message', function (message) {
   alert(message);
 });

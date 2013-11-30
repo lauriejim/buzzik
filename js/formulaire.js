@@ -79,7 +79,6 @@ var formulaire = {
 
 $("#choisirNbrJoueur img").click(function () {
     
-    console.log(room.params.nbrJoueur);
   });
   // Boutton "Commencer la partie"
   $('a[href=#multiple_player]').on('click', function(e){

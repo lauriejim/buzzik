@@ -52,7 +52,7 @@ var room = {
     var idRoom = data.idRoom;
     var strWindowFeatures = "toolbar=no,resize=no,titlebar=no,";
     strWindowFeatures = strWindowFeatures + "menubar=no,width=200,height=200,maximize=null";
-    window.open('http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=http://buzzik.local/buzzik/?room='+idRoom, '', strWindowFeatures); 
+    window.open('http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=http://buzzik.local:1337/?room='+idRoom, '', strWindowFeatures); 
   },
 
   // L'utilisateur à rejoin une room 
@@ -206,7 +206,6 @@ var room = {
 
     DZ.api('playlist/'+room.params.idplaylist, function(response){
 
-      console.log(response);
       //Je récupére l'objet contenant la liste objet de chaque musique
       GetUrlObjet(response.tracks.data);
       //Je transforme mes bojets en deux tableau urlMP3 et Titre
@@ -245,7 +244,6 @@ function connect(room){
               if(response.status === 'connected'){
               // connected
               FB.api('/me', function(userInfo) {
-                  console.log(userInfo);
                   // Get all user informations
                   var emailUser = userInfo.email;
                   var prenomUser = userInfo.first_name;
