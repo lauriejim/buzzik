@@ -10,6 +10,7 @@ var room = {
     listMusiqueUrl: '',
     listMusiqueTitle : '',
     listeMusique : '',
+    idplaylist : '640657295',
 
     emitBuzzed : function () {},
     onBuzzed : function () {},
@@ -203,7 +204,7 @@ var room = {
       }
     });
 
-    DZ.api('playlist/640657295', function(response){
+    DZ.api('playlist/'+room.params.idplaylist, function(response){
 
       console.log(response);
       //Je récupére l'objet contenant la liste objet de chaque musique

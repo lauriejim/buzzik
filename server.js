@@ -5,10 +5,9 @@ var express = require('express')
   , io = require('socket.io').listen(server);
 
 
+server.listen(1337);
+
 var timerSong;
-
-
-server.listen(1337);	
 
 // liste des utilisateur
 var usernames = new Array();
@@ -117,7 +116,7 @@ io.sockets.on('connection', function (socket) {
         rooms[socket.room].play = true;
         rooms[socket.room].buzz = false;
         timerSong =  setInterval(function(){
-            rooms[socket.room].timer += 0.1;
+              rooms[socket.room].timer += 0.1;  
         }, 100);
     });
 
@@ -281,8 +280,8 @@ io.sockets.on('connection', function (socket) {
                     socket.broadcast.to(socket.room).emit('refreshScrore');
             }
             if (socket.numRoom != undefined) {
-                    socket.join("accueil");
                     clearInterval(timerSong);
+                    socket.join("accueil");
                     delete rooms[socket.numRoom];
                     socket.numRoom = undefined;
                     socket.broadcast.to(socket.room).emit('roomDelete');
