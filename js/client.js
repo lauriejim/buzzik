@@ -1,4 +1,4 @@
-var socket = io.connect('http://buzzik.local:1337/');
+var socket = io.connect('http://localhost:1337/');
 var audio = new Audio("sound/banzai.mp3");
 
 socket.on('connect', function () {
