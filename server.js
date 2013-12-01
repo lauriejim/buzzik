@@ -17,6 +17,10 @@ app.get('/', function(req, res) {
   res.render('index.ejs');
 });
 
+app.get('/join', function(req, res) {
+  res.render('player.ejs');
+});
+
 server.listen(1337);
 
 // fonction timer

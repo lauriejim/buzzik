@@ -52,7 +52,7 @@ var room = {
     var idRoom = data.idRoom;
     var strWindowFeatures = "toolbar=no,resize=no,titlebar=no,";
     strWindowFeatures = strWindowFeatures + "menubar=no,width=200,height=200,maximize=null";
-    window.open('http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=http://buzzik.local:1337/?room='+idRoom, '', strWindowFeatures); 
+    window.open('http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=http://buzzik.local:1337/join?room='+idRoom, '', strWindowFeatures); 
   },
 
   // L'utilisateur à rejoin une room 
