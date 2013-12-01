@@ -19,7 +19,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/join', function(req, res) {
-  res.render('player.ejs');
+  res.render('mobile.ejs');
 });
 
 server.listen(1337);
