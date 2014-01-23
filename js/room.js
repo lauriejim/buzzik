@@ -10,7 +10,7 @@ var room = {
     listMusiqueUrl: '',
     listMusiqueTitle : '',
     listeMusique : '',
-    idplaylist : '640657295',
+    idplaylist : '8512362',
 
     emitBuzzed : function () {},
     onBuzzed : function () {},

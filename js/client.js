@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:1337/');
+var socket = io.connect('http://buzzik.local:1337/');
 var audio = new Audio("sound/banzai.mp3");
 
 socket.on('connect', function () {
@@ -240,7 +240,7 @@ socket.on('refreshListesInfos', function (liste) {
 
 // Detection de fin ou suppression de partie
 // redirige vers la page d'accueil
-socket.on('roomDelete', function () {
+socket.on('accueilLocation', function () {
   document.location.href="/"; 
 });
 

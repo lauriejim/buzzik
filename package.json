@@ -1,0 +1,14 @@
+{
+    "name": "buzzik",
+    "private": true,
+    "version": "0.1.0",
+    "description": "funny blind test",
+    "dependencies": {
+        "socket.io": "0.9.16",
+        "ejs": "0.8.4",
+        "express": "3.4.2"
+    },
+    "repository": "",
+    "author": "",
+    "license": ""
+}

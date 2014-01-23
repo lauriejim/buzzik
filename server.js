@@ -19,7 +19,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/join', function(req, res) {
-  res.render('mobile.ejs');
+  res.render('player.ejs');
 });
 
 server.listen(1337);
@@ -90,9 +90,11 @@ io.sockets.on('connection', function (socket) {
                 numUser++;
             }else{
                     socket.emit('message', 'La partie est pleine');
+                    socket.emit('accueilLocation');
             }
 	    }else{
 	            socket.emit('message', 'cette room n\'existe pas');
+                socket.emit('accueilLocation');
 	    }
 	});
 
@@ -115,7 +117,9 @@ io.sockets.on('connection', function (socket) {
         rooms[socket.room].play = true;
         rooms[socket.room].buzz = false;
         timerSong =  setInterval(function(){
+            if (rooms[socket.room] != undefined) {
               rooms[socket.room].timer += 0.1;  
+            }
         }, 100);
     });
 
@@ -149,7 +153,7 @@ io.sockets.on('connection', function (socket) {
             io.sockets.to(socket.room).emit('prochaineMusique', listMusiqueUrl[numTrack], 'play');
             rooms[socket.room].timer = 0;
         }else{
-                io.sockets.to(socket.room).emit('roomDelete');
+                io.sockets.to(socket.room).emit('accueilLocation');
 
         }
     });
@@ -207,7 +211,7 @@ io.sockets.on('connection', function (socket) {
 
                 usernames[socket.numUser].point += Math.ceil(100-(50/(30/rooms[socket.room].timer)));
                 io.sockets.to(socket.room).emit('message', 'Fin de la partie');
-                io.sockets.to(socket.room).emit('roomDelete');
+                io.sockets.to(socket.room).emit('accueilLocation');
 
             }
                 
@@ -238,7 +242,7 @@ io.sockets.on('connection', function (socket) {
                     socket.join("accueil");
                     delete rooms[socket.numRoom];
                     socket.numRoom = undefined;
-                    socket.broadcast.to(socket.room).emit('roomDelete');
+                    socket.broadcast.to(socket.room).emit('accueilLocation');
                     io.sockets.to('accueil').emit('afficherLesRoomsExistante', rooms)
             }
     });
