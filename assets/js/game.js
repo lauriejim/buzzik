@@ -4,6 +4,7 @@ var game = {
   $pause_button: $('#pause'),
   $gamer_list: $('#gamer-list'),
   party_playlist: new Array(),
+  haveBuzz: false,
 
   init: function() {
     if (document.getElementById('player')) {
@@ -72,7 +73,6 @@ var game = {
 
     function insertTrack() {
       if (_this.party_playlist.length == _this.settings.tracks) {
-        console.log(_this.party_playlist);
         _this.startGame();
       } else {
         var track_index = Math.floor((Math.random() * _this.playlist.length) + 1);
@@ -95,7 +95,7 @@ var game = {
     .then(function() {
       _this.$play_button.toggleClass('hidden');
       _this.$play_button.on('click', function () {
-        player.playTrack();
+        if (!_this.haveBuzz) player.playTrack();
       });
       _this.$pause_button.on('click', function () {
         player.pauseTrack();
@@ -104,7 +104,8 @@ var game = {
   },
 
   nextTrack: function() {
-    this.currentTrack ++;
+    this.currentTrack++;
+    if (this.currentTrack == this.party_playlist.length) return;
     player.loadTrack(this.party_playlist[this.currentTrack].preview)
     .then(function() {
       player.playTrack();
@@ -123,6 +124,7 @@ var game = {
     socket.on('haveBuzz', function (gamer) {
       if (player.play) {
         player.pauseTrack();
+        game.haveBuzz = true;
         $('#gamer-'+gamer.id).removeClass('btn-primary').addClass('btn-warning');
         socket.post('/game/winBuzz', gamer, function(){});
       }
@@ -132,13 +134,14 @@ var game = {
     });
     socket.on('verifyAnswer', function (response) {
       _this.verifyAnswer(response);
+      _this.haveBuzz = false;
     });
   },
 
   verifyAnswer: function(response) {
     var artist_name = this.party_playlist[this.currentTrack].artist.name.toLowerCase();
     var gamer_response = response.answer.toLowerCase();
-    console.log(artist_name);
+
     var result = this.levenshteinDistance(gamer_response, artist_name);
 
     if (gamer_response.length > artist_name.length) max_length = gamer_response.length;
@@ -161,7 +164,6 @@ var game = {
       _this.nextTrack();
       $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
       $('.gamer-status').addClass('btn-primary');
-      console.log($('.gamer-status'));
     }, 1000);
   },
 
@@ -171,33 +173,33 @@ var game = {
   },
 
   levenshteinDistance: function(a, b){
-      if (a.length == 0) return b.length;
-      if (b.length == 0) return a.length;
+    if (a.length == 0) return b.length;
+    if (b.length == 0) return a.length;
 
-      var matrix = [];
+    var matrix = [];
 
-      var i;
-      for (i = 0; i <= b.length; i++) {
-        matrix[i] = [i];
-      }
+    var i;
+    for (i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+    }
 
-      var j;
-      for (j = 0; j <= a.length; j++) {
-        matrix[0][j] = j;
-      }
+    var j;
+    for (j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
+    }
 
-      for (i = 1; i <= b.length; i++) {
-        for (j = 1; j <= a.length; j++) {
-          if (b.charAt(i-1) == a.charAt(j-1)) {
-            matrix[i][j] = matrix[i-1][j-1];
-          } else {
-            matrix[i][j] = Math.min(matrix[i-1][j-1] + 1,
-                                    Math.min(matrix[i][j-1] + 1,
-                                             matrix[i-1][j] + 1));
-          }
+    for (i = 1; i <= b.length; i++) {
+      for (j = 1; j <= a.length; j++) {
+        if (b.charAt(i-1) == a.charAt(j-1)) {
+          matrix[i][j] = matrix[i-1][j-1];
+        } else {
+          matrix[i][j] = Math.min(matrix[i-1][j-1] + 1,
+                         Math.min(matrix[i][j-1] + 1,
+                                  matrix[i-1][j] + 1));
         }
       }
-
-      return matrix[b.length][a.length];
     }
+
+    return matrix[b.length][a.length];
+  }
 };

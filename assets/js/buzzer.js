@@ -3,6 +3,8 @@ var buzzer = {
   $buzzer: $('#buzzer'),
   $modal: $('#modal-buzz'),
   $modal_form: $('.modal-form'),
+  $modal_input: $('input[name="artist_name"]'),
+  $modal_close: $('.close'),
 
   init: function() {
     var height = $(window).height();
@@ -37,14 +39,24 @@ var buzzer = {
   displayModal: function() {
     var _this = this;
     this.$modal.modal('show');
+    this.$modal_close.one('click', function (e){
+      e.preventDefault();
+      _this.$modal.modal('hide');
+      response = {
+        answer: "",
+        gamer: game.settings
+      }
+      _this.$modal_input.val("");
+      socket.post('/game/verifyAnswer', response, function (){});
+    });
     this.$modal_form.one('submit', function (e) {
       e.preventDefault();
       _this.$modal.modal('hide');
       response = {
-        answer: this.artist_name.value,
+        answer: _this.$modal_input.val(),
         gamer: game.settings
       }
-      this.artist_name.value = "";
+      _this.$modal_input.val("");
       socket.post('/game/verifyAnswer', response, function (){});
     });
   },

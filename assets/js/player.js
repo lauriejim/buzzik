@@ -1,6 +1,5 @@
 var player = {
 
-  play: false,
   $timer: $('.track-progress-bar p'),
   $times_container: $('.track-progress-bar'),
   $play_button: $('#start'),
@@ -9,6 +8,7 @@ var player = {
   border_progress: document.getElementById('inactive-progress'),
   progress_bar: document.getElementById('active-progress'),
   current_time: 0,
+  play: false,
 
   init: function() {
     var progress_CTX = this.border_progress.getContext('2d');
