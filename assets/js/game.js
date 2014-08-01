@@ -30,13 +30,10 @@ var game = {
     var _this = this;
     this.setSocketListener();
 
-    // Display timer player
     player.init();
 
-    // Connect deezer api
     deezer.init();
 
-    // Get deezer playlist
     deezer.playlist('640657295')
     .then(function (playlist) {
       _this.playlist = playlist;
@@ -62,7 +59,6 @@ var game = {
     var playlist = new Array();
     var track_selected = new Array();
 
-    // Test readable tracks
     for (var i = 0, length = this.playlist.tracks.data.length; i < length; i++) {
       var track = this.playlist.tracks.data[i];
       if (track.readable) playlist.push(track);
@@ -70,12 +66,10 @@ var game = {
 
     this.playlist = playlist;
 
-    // Test if enougth tracks in playlist
     if (this.playlist.length < this.settings.tracks) this.settings.tracks = this.playlist.length;
 
     insertTrack();
 
-    // Make random list
     function insertTrack() {
       if (_this.party_playlist.length == _this.settings.tracks) {
         _this.startGame();

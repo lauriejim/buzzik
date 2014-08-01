@@ -20,21 +20,18 @@ var player = {
   drawInactive: function(progress_CTX){
     progress_CTX.lineCap = 'square';
 
-    //outer ring
     progress_CTX.beginPath();
     progress_CTX.lineWidth = 15;
     progress_CTX.strokeStyle = '#e1e1e1';
     progress_CTX.arc(137.5,137.5,129,0,2*Math.PI);
     progress_CTX.stroke();
 
-    //progress bar
     progress_CTX.beginPath();
     progress_CTX.lineWidth = 0;
     progress_CTX.fillStyle = '#e6e6e6';
     progress_CTX.arc(137.5,137.5,121,0,2*Math.PI);
     progress_CTX.fill();
 
-    //progress_bar timer
     progress_CTX.beginPath();
     progress_CTX.lineWidth = 0;
     progress_CTX.fillStyle = '#f7f7f7';
