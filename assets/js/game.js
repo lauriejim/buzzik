@@ -72,6 +72,7 @@ var game = {
 
     function insertTrack() {
       if (_this.party_playlist.length == _this.settings.tracks) {
+        console.log(_this.party_playlist);
         _this.startGame();
       } else {
         var track_index = Math.floor((Math.random() * _this.playlist.length) + 1);
@@ -102,12 +103,20 @@ var game = {
     });
   },
 
+  nextTrack: function() {
+    this.currentTrack ++;
+    player.loadTrack(this.party_playlist[this.currentTrack].preview)
+    .then(function() {
+      player.playTrack();
+    });
+  },
+
   setSocketListener: function() {
     var _this = this;
     socket.on('newPlayer', function (gamer) {
       var template =
       '<div class="col-sm-3 col-md-3">' +
-        '<button class="btn bn-lg btn-primary btn-block" id="gamer-' + gamer.id + '">' + gamer.username + '</button>' +
+        '<button class="btn bn-lg btn-primary btn-block gamer-status" id="gamer-' + gamer.id + '">' + gamer.username + '</button>' +
       '</div>';
       _this.$gamer_list.append(template);
     });
@@ -121,13 +130,74 @@ var game = {
         socket.post('/game/failBuzz', gamer, function(){});
       }
     });
-    socket.on('verifyAnswer', function (req) {
-      $('#gamer-'+req.gamer.id).removeClass('btn-warning').addClass('btn-success');
-      socket.post('/game/goodAnswer', req, function(){});
+    socket.on('verifyAnswer', function (response) {
+      _this.verifyAnswer(response);
     });
   },
 
-  verifyAnswer: function() {
+  verifyAnswer: function(response) {
+    var artist_name = this.party_playlist[this.currentTrack].artist.name.toLowerCase();
+    var gamer_response = response.answer.toLowerCase();
+    console.log(artist_name);
+    var result = this.levenshteinDistance(gamer_response, artist_name);
 
-  }
+    if (gamer_response.length > artist_name.length) max_length = gamer_response.length;
+    else max_length = artist_name.length;
+
+    percentage = (max_length-result)*100/max_length;
+
+    if (percentage >= 70) {
+      this.goodAnswer(response.gamer);
+    } else {
+      this.badAnswer(response.gamer);
+    }
+  },
+
+  goodAnswer: function(gamer) {
+    var _this = this;
+    $('#gamer-'+gamer.id).removeClass('btn-warning').addClass('btn-success');
+    socket.post('/game/goodAnswer', gamer, function(){});
+    setTimeout(function() {
+      _this.nextTrack();
+      $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
+      $('.gamer-status').addClass('btn-primary');
+      console.log($('.gamer-status'));
+    }, 1000);
+  },
+
+  badAnswer: function(gamer) {
+    $('#gamer-'+gamer.id).removeClass('btn-warning').addClass('btn-danger');
+    player.playTrack();
+  },
+
+  levenshteinDistance: function(a, b){
+      if (a.length == 0) return b.length;
+      if (b.length == 0) return a.length;
+
+      var matrix = [];
+
+      var i;
+      for (i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+      }
+
+      var j;
+      for (j = 0; j <= a.length; j++) {
+        matrix[0][j] = j;
+      }
+
+      for (i = 1; i <= b.length; i++) {
+        for (j = 1; j <= a.length; j++) {
+          if (b.charAt(i-1) == a.charAt(j-1)) {
+            matrix[i][j] = matrix[i-1][j-1];
+          } else {
+            matrix[i][j] = Math.min(matrix[i-1][j-1] + 1,
+                                    Math.min(matrix[i][j-1] + 1,
+                                             matrix[i-1][j] + 1));
+          }
+        }
+      }
+
+      return matrix[b.length][a.length];
+    }
 };

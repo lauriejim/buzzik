@@ -24,13 +24,13 @@ var buzzer = {
   setSocketListener: function() {
     var _this = this;
     socket.on('failBuzz', function (gamer) {
-      if (gamer.id == game.settings.id) _this.initBuzzer();
+      if (gamer.id === game.settings.id) _this.initBuzzer();
     });
     socket.on('winBuzz', function (gamer) {
-      if (gamer.id == game.settings.id) _this.displayModal();
+      if (gamer.id === game.settings.id) _this.displayModal();
     });
     socket.on('goodAnswer', function (req) {
-      if (req.gamer.id == game.settings.id) _this.initBuzzer();
+      _this.initBuzzer();
     });
   },
 
@@ -41,10 +41,10 @@ var buzzer = {
       e.preventDefault();
       _this.$modal.modal('hide');
       response = {
-        answer: this.artiste_name.value,
+        answer: this.artist_name.value,
         gamer: game.settings
       }
-      this.artiste_name.value = "";
+      this.artist_name.value = "";
       socket.post('/game/verifyAnswer', response, function (){});
     });
   },
