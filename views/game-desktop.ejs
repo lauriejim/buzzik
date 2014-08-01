@@ -1,0 +1,34 @@
+<div id="dz-root"></div>
+<audio id="audio-player" src="" ontimeupdate="player.updateTimer(this);"></audio>
+<script src="http://cdn-files.deezer.com/js/min/dz.js"></script>
+<div class="container" id="player" role="main">
+
+  <div class="jumbotron">
+
+    <!-- List player  -->
+    <div class="row" id="gamer-list">
+
+    </div>
+    <!-- END List player  -->
+
+    <!-- Track progress bar -->
+    <div class="row track-progress-bar-container">
+
+      <div class="track-progress-bar">
+        <canvas id="inactive-progress" class="progress-inactive" height="275px" width="275px"></canvas>
+        <canvas id="active-progress" class="progress-active"  height="275px" width="275px"></canvas>
+        <p>30s</p>
+      </div>
+
+    </div>
+    <!-- END Track progress bar -->
+
+    <div class="row">
+      <div class="col-sm-4 col-md-4 col-sm-offset-4 col-md-offset-4">
+        <button class="btn bn-lg btn-success btn-block hidden" id="start"><%= __('START') %></button>
+        <button class="btn bn-lg btn-warning btn-block hidden" id="pause"><%= __('PAUSE') %></button>
+      </div>
+    </div>
+
+  </div>
+</div>
