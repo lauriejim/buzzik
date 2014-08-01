@@ -22,8 +22,6 @@ module.exports = {
 
     req.session.settings = party;
 
-    sails.log.info('Create party: key ' + party.key);
-
     res.redirect('/game/player');
   },
 
@@ -40,8 +38,6 @@ module.exports = {
     req.session.settings = gamer;
 
     sails.sockets.blast('newPlayer', gamer, req.socket);
-
-    sails.log(gamer.username + ' join ' + gamer.key);
 
     res.redirect('/game/buzzer');
   },
@@ -63,7 +59,6 @@ module.exports = {
   },
 
   failBuzz: function(req, res) {
-    sails.log('coucou');
     sails.sockets.blast('failBuzz', req.params.all(), req.socket);
   },
 
