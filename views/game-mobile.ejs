@@ -1,7 +1,7 @@
 <div class="container" id="buzzer" role="main">
 
   <!-- Response modal -->
-  <div class="modal fade" id="modal-buzz" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" id="modal-buzz" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
     <div class="modal-dialog modal-lg">
       <div class="container">
         <div class="row">
@@ -11,7 +11,7 @@
               <form class="modal-form">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('Close') %></span></button>
                 <h3 class="modal-title"><%= __('Artiste name') %></h3>
-                <input type="text" class="form-control" name="artiste_name" placeholder="<%= __('Artiste name') %>" required>
+                <input type="text" class="form-control" name="artist_name" placeholder="<%= __('Artiste name') %>" required>
                 <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><%= __('Send') %></button>
               </form>
             </div>

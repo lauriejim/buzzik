@@ -4,6 +4,7 @@ var game = {
   $pause_button: $('#pause'),
   $gamer_list: $('#gamer-list'),
   party_playlist: new Array(),
+  haveBuzz: false,
 
   init: function() {
     if (document.getElementById('player')) {
@@ -94,11 +95,20 @@ var game = {
     .then(function() {
       _this.$play_button.toggleClass('hidden');
       _this.$play_button.on('click', function () {
-        player.playTrack();
+        if (!_this.haveBuzz) player.playTrack();
       });
       _this.$pause_button.on('click', function () {
         player.pauseTrack();
       });
+    });
+  },
+
+  nextTrack: function() {
+    this.currentTrack++;
+    if (this.currentTrack == this.party_playlist.length) return;
+    player.loadTrack(this.party_playlist[this.currentTrack].preview)
+    .then(function() {
+      player.playTrack();
     });
   },
 
@@ -107,13 +117,14 @@ var game = {
     socket.on('newPlayer', function (gamer) {
       var template =
       '<div class="col-sm-3 col-md-3">' +
-        '<button class="btn bn-lg btn-primary btn-block" id="gamer-' + gamer.id + '">' + gamer.username + '</button>' +
+        '<button class="btn bn-lg btn-primary btn-block gamer-status" id="gamer-' + gamer.id + '">' + gamer.username + '</button>' +
       '</div>';
       _this.$gamer_list.append(template);
     });
     socket.on('haveBuzz', function (gamer) {
       if (player.play) {
         player.pauseTrack();
+        game.haveBuzz = true;
         $('#gamer-'+gamer.id).removeClass('btn-primary').addClass('btn-warning');
         socket.post('/game/winBuzz', gamer, function(){});
       }
@@ -121,13 +132,74 @@ var game = {
         socket.post('/game/failBuzz', gamer, function(){});
       }
     });
-    socket.on('verifyAnswer', function (req) {
-      $('#gamer-'+req.gamer.id).removeClass('btn-warning').addClass('btn-success');
-      socket.post('/game/goodAnswer', req, function(){});
+    socket.on('verifyAnswer', function (response) {
+      _this.verifyAnswer(response);
+      _this.haveBuzz = false;
     });
   },
 
-  verifyAnswer: function() {
+  verifyAnswer: function(response) {
+    var artist_name = this.party_playlist[this.currentTrack].artist.name.toLowerCase();
+    var gamer_response = response.answer.toLowerCase();
 
+    var result = this.levenshteinDistance(gamer_response, artist_name);
+
+    if (gamer_response.length > artist_name.length) max_length = gamer_response.length;
+    else max_length = artist_name.length;
+
+    percentage = (max_length-result)*100/max_length;
+
+    if (percentage >= 70) {
+      this.goodAnswer(response.gamer);
+    } else {
+      this.badAnswer(response.gamer);
+    }
+  },
+
+  goodAnswer: function(gamer) {
+    var _this = this;
+    $('#gamer-'+gamer.id).removeClass('btn-warning').addClass('btn-success');
+    socket.post('/game/goodAnswer', gamer, function(){});
+    setTimeout(function() {
+      _this.nextTrack();
+      $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
+      $('.gamer-status').addClass('btn-primary');
+    }, 1000);
+  },
+
+  badAnswer: function(gamer) {
+    $('#gamer-'+gamer.id).removeClass('btn-warning').addClass('btn-danger');
+    player.playTrack();
+  },
+
+  levenshteinDistance: function(a, b){
+    if (a.length == 0) return b.length;
+    if (b.length == 0) return a.length;
+
+    var matrix = [];
+
+    var i;
+    for (i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+    }
+
+    var j;
+    for (j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
+    }
+
+    for (i = 1; i <= b.length; i++) {
+      for (j = 1; j <= a.length; j++) {
+        if (b.charAt(i-1) == a.charAt(j-1)) {
+          matrix[i][j] = matrix[i-1][j-1];
+        } else {
+          matrix[i][j] = Math.min(matrix[i-1][j-1] + 1,
+                         Math.min(matrix[i][j-1] + 1,
+                                  matrix[i-1][j] + 1));
+        }
+      }
+    }
+
+    return matrix[b.length][a.length];
   }
 };
