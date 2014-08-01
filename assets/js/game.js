@@ -172,6 +172,13 @@ var game = {
     player.playTrack();
   },
 
+  endTrack: function() {
+    socket.post('/game/goodAnswer', {}, function(){});
+    this.nextTrack();
+    $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
+    $('.gamer-status').addClass('btn-primary');
+  },
+
   levenshteinDistance: function(a, b){
     if (a.length == 0) return b.length;
     if (b.length == 0) return a.length;
