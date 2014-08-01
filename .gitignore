@@ -1,15 +1,33 @@
-# Created by http://gitignore.io
-
-### OSX ###
-.DS_Store
-.AppleDouble
-.LSOverride
-Icon
+############################
+# npm
+############################
+node_modules
+npm-debug.log
 
 
-# Thumbnails
-._*
+############################
+# tmp, editor & OS files
+############################
+.tmp
+*.swo
+*.swp
+*.swn
+*.swm
+.DS_STORE
+*#
+*~
+.idea
+nbproject
 
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
+
+############################
+# Tests
+############################
+testApp
+coverage
+
+
+############################
+# Other
+############################
+.node_history
