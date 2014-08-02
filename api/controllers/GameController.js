@@ -47,9 +47,19 @@ module.exports = {
 
     req.session.settings = gamer;
 
-    sails.sockets.broadcast(gamer.key, 'newPlayer', gamer, req.socket);
+    var rooms = sails.sockets.rooms();
+    var room_exist = false;
 
-    res.redirect('/game/buzzer');
+    for (var i = 0, length = rooms.length; i < length; i++) {
+      if (rooms[i] === gamer.key) room_exist = true;
+    };
+
+    if (room_exist) {
+      sails.sockets.broadcast(gamer.key, 'newPlayer', gamer, req.socket);
+      res.redirect('/game/buzzer');
+    } else {
+      res.redirect('/');
+    }
   },
 
   playDesktop: function(req, res) {
