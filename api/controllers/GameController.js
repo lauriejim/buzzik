@@ -25,13 +25,27 @@ module.exports = {
       key: ''
     };
 
-    var date = new Date().getTime();
-    var code = crypto.createHash('md5').update(date + party.name).digest("hex");
-    party.key = code.slice(0,6);
+    testKey();
 
-    req.session.settings = party;
+    function testKey() {
+      var rooms = sails.sockets.rooms();
+      var room_exist = false;
 
-    res.redirect('/game/player');
+      var date = new Date().getTime();
+      var code = crypto.createHash('md5').update(date + party.name).digest("hex");
+      party.key = code.slice(0,6);
+
+      for (var i = 0, length = rooms.length; i < length; i++) {
+        if (rooms[i] === party.key) room_exist = true;
+      };
+
+      if (room_exist) {
+        testKey();
+      } else {
+        req.session.settings = party;
+        res.redirect('/game/player');
+      }
+    }
   },
 
   join: function(req, res) {
