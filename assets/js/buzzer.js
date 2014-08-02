@@ -37,6 +37,9 @@ var buzzer = {
     socket.on('goodAnswer', function (req) {
       _this.initBuzzer();
     });
+    socket.on('haveLeave', function (gamer) {
+      game.haveLeave(gamer);
+    });
   },
 
   displayModal: function() {

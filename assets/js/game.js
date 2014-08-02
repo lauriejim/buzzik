@@ -122,6 +122,7 @@ var game = {
       _this.handleBuzz(gamer);
     });
     socket.on('haveLeave', function (gamer) {
+      console.log(gamer);
       _this.haveLeave(gamer);
     });
     socket.on('verifyAnswer', function (response) {
@@ -240,8 +241,12 @@ var game = {
   },
 
   haveLeave: function(gamer) {
+    console.log(gamer);
     if (this.platforme === 'player') {
       $('#gamer-' + gamer.id).parent().remove();
+    }
+    if (gamer.platforme === 'player') {
+      window.location = "/";
     }
   },
 

@@ -18,6 +18,7 @@ module.exports = {
     var party = {
       name: req.param('game_name'),
       tracks: req.param('game_tracks'),
+      platforme: 'player',
       key: ''
     };
 
@@ -33,7 +34,8 @@ module.exports = {
   join: function(req, res) {
     var gamer = {
       username: req.param('game_username'),
-      key: req.param('game_key')
+      key: req.param('game_key'),
+      platforme: 'gamer',
     };
 
     var date = new Date().getTime();
@@ -42,7 +44,7 @@ module.exports = {
 
     req.session.settings = gamer;
 
-    sails.sockets.blast('newPlayer', gamer, req.socket);
+    sails.sockets.broadcast(gamer.key, 'newPlayer', gamer, req.socket);
 
     res.redirect('/game/buzzer');
   },
@@ -56,40 +58,44 @@ module.exports = {
   },
 
   gameSettings: function(req, res) {
-    if (req.session.settings) req.session.settings.connected = true;
+    if (req.session.settings) {
+      req.session.settings.connected = true;
+      sails.sockets.join(req.socket, req.session.settings.key);
+    }
+
     res.json(req.session.settings);
   },
 
   haveBuzz: function(req, res) {
-    sails.sockets.blast('haveBuzz', req.params.all(), req.socket);
+    sails.sockets.broadcast(req.param('key'), 'haveBuzz', req.params.all(), req.socket);
   },
 
   failBuzz: function(req, res) {
-    sails.sockets.blast('failBuzz', req.params.all(), req.socket);
+    sails.sockets.broadcast(req.param('key'), 'failBuzz', req.params.all(), req.socket);
   },
 
   winBuzz: function(req, res) {
-    sails.sockets.blast('winBuzz', req.params.all(), req.socket);
+    sails.sockets.broadcast(req.param('key'), 'winBuzz', req.params.all(), req.socket);
   },
 
   verifyAnswer: function(req, res) {
-    sails.sockets.blast('verifyAnswer', req.params.all(), req.socket);
+    sails.sockets.broadcast(req.param('gamer').key, 'verifyAnswer', req.params.all(), req.socket);
   },
 
   goodAnswer: function(req, res) {
-    sails.sockets.blast('goodAnswer', req.params.all(), req.socket);
+    sails.sockets.broadcast(req.param('key'), 'goodAnswer', req.params.all(), req.socket);
   },
 
   badAnswer: function(req, res) {
-    sails.sockets.blast('badAnswer', req.params.all(), req.socket);
+    sails.sockets.broadcast(req.param('key'), 'badAnswer', req.params.all(), req.socket);
   },
 
   timeEnd: function(req, res) {
-    sails.sockets.blast('timeEnd', req.params.all(), req.socket);
+    sails.sockets.broadcast(req.param('key'), 'timeEnd', req.params.all(), req.socket);
   },
 
   haveLeave: function(gamer) {
-    sails.sockets.blast('haveLeave', gamer);
+    sails.sockets.broadcast(gamer.key, 'haveLeave', gamer);
   }
 
 };
