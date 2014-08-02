@@ -17,7 +17,7 @@
     <!-- END Action button  -->
 
     <!-- Create modal -->
-    <div class="modal fade create-game" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade create-game" role="dialog">
       <div class="modal-dialog modal-lg">
         <div class="container">
           <div class="row">
@@ -45,7 +45,7 @@
     <!-- END Create modal -->
 
     <!-- Join modal -->
-    <div class="modal fade join-game" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade join-game" role="dialog" <% if (key) { %>show="true"<% } %>>
       <div class="modal-dialog modal-lg">
         <div class="container">
           <div class="row">
@@ -57,7 +57,11 @@
                   <h3 class="modal-title"><%= __('Join party') %></h3>
                   <input type="text" class="form-control" name="game_username" placeholder="<%= __('Pseudo') %>" required>
                   <span class="label label-primary"><%= __('Private party key') %></span>
-                  <input type="text" class="form-control modal-label" name="game_key" placeholder="<%= __('Key') %>" required>
+                  <input type="text" class="form-control modal-label" name="game_key" placeholder="<%= __('Key') %>"
+                  <% if (key) { %>
+                    value="<%= key %>"
+                  <% }%>
+                  required>
                   <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><%= __('Play') %></button>
                 </form>
               </div>
@@ -72,9 +76,3 @@
   </div>
 
 </div>
-
-<script>
-  var setTracks = function(el) {
-    $('#range').val(el.value);
-  };
-</script>

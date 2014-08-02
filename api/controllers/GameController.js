@@ -11,14 +11,17 @@ module.exports = {
 
   home: function(req, res) {
     if (req.session) delete req.session;
-    res.view('homepage');
+    var key = req.param('join');
+    res.view('homepage', {
+      key: key
+    });
   },
 
   new: function(req, res) {
     var party = {
       name: req.param('game_name'),
       tracks: req.param('game_tracks'),
-      platforme: 'player',
+      platform: 'player',
       key: ''
     };
 
@@ -35,7 +38,7 @@ module.exports = {
     var gamer = {
       username: req.param('game_username'),
       key: req.param('game_key'),
-      platforme: 'gamer',
+      platform: 'gamer',
     };
 
     var date = new Date().getTime();

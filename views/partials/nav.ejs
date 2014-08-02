@@ -3,5 +3,19 @@
     <div class="navbar-header">
       <a class="navbar-brand" href="/">Buzzik</a>
     </div>
+    <% if (req.session && req.session.settings.platform === 'player') { %>
+      <p class="navbar-text">Private party key: <span class="label label-primary"><%= req.session.settings.key %></span></p>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li id="fat-menu" class="dropdown open">
+            <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">QR code<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+              <li role="presentation"><img src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl=http://192.168.1.57:1337?join=<%= req.session.settings.key %>" /></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    <% } %>
+
   </div>
 </nav>

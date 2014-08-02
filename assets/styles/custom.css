@@ -201,3 +201,6 @@ input {
 .label-point {
   margin-left: 10px;
 }
+.popover, .arrow, .popover-content {
+  background-color: red;
+}

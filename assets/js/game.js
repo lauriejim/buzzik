@@ -4,19 +4,22 @@ var game = {
   $pause_button: $('#pause'),
   $gamer_list: $('#gamer-list'),
   $track_container: $('.track-container'),
+  $modal_join: $('.join-game'),
   party_playlist: new Array(),
   haveBuzz: false,
 
   init: function() {
     if (document.getElementById('player')) {
-      this.platforme = 'player';
+      this.platform = 'player';
       this.playerInit();
     }
 
     if (document.getElementById('buzzer')) {
-      this.platforme = 'buzzer';
+      this.platform = 'buzzer';
       this.buzzerInit();
     }
+
+    if (this.$modal_join.attr('show')) this.$modal_join.modal('show');
   },
 
   buzzerInit: function() {
@@ -122,7 +125,6 @@ var game = {
       _this.handleBuzz(gamer);
     });
     socket.on('haveLeave', function (gamer) {
-      console.log(gamer);
       _this.haveLeave(gamer);
     });
     socket.on('verifyAnswer', function (response) {
@@ -223,7 +225,7 @@ var game = {
       $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
       $('.gamer-status').addClass('btn-primary');
       $('.timer-progress').css('left', '0px');
-    }, 2000);
+    }, 1500);
   },
 
   badAnswer: function(gamer) {
@@ -241,11 +243,10 @@ var game = {
   },
 
   haveLeave: function(gamer) {
-    console.log(gamer);
-    if (this.platforme === 'player') {
+    if (this.platform === 'player') {
       $('#gamer-' + gamer.id).parent().remove();
     }
-    if (gamer.platforme === 'player') {
+    if (gamer.platform === 'player') {
       window.location = "/";
     }
   },
