@@ -121,6 +121,9 @@ var game = {
     socket.on('haveBuzz', function (gamer) {
       _this.handleBuzz(gamer);
     });
+    socket.on('haveLeave', function (gamer) {
+      _this.haveLeave(gamer);
+    });
     socket.on('verifyAnswer', function (response) {
       _this.verifyAnswer(response);
       _this.haveBuzz = false;
@@ -234,6 +237,12 @@ var game = {
     $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
     $('.gamer-status').addClass('btn-primary');
     $('.timer-progress').css('left', '0px');
+  },
+
+  haveLeave: function(gamer) {
+    if (this.platforme === 'player') {
+      $('#gamer-' + gamer.id).parent().remove();
+    }
   },
 
   countPoints: function(gamer) {

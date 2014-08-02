@@ -9,7 +9,7 @@
  */
 module.exports = function(req, res, next) {
 
-  if (req.session.settings) {
+  if (req.session.settings && !req.session.settings.connected) {
     return next();
   }
 

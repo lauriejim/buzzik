@@ -9,6 +9,11 @@ var crypto = require('crypto');
 
 module.exports = {
 
+  home: function(req, res) {
+    if (req.session) delete req.session;
+    res.view('homepage');
+  },
+
   new: function(req, res) {
     var party = {
       name: req.param('game_name'),
@@ -51,6 +56,7 @@ module.exports = {
   },
 
   gameSettings: function(req, res) {
+    if (req.session.settings) req.session.settings.connected = true;
     res.json(req.session.settings);
   },
 
@@ -80,8 +86,11 @@ module.exports = {
 
   timeEnd: function(req, res) {
     sails.sockets.blast('timeEnd', req.params.all(), req.socket);
-  }
+  },
 
+  haveLeave: function(gamer) {
+    sails.sockets.blast('haveLeave', gamer);
+  }
 
 };
 
