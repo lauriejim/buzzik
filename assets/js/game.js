@@ -92,7 +92,6 @@ var game = {
   startGame: function() {
     var _this = this;
     this.currentTrack = 0;
-    console.log(this.party_playlist[this.currentTrack]);
     player.loadTrack(this.party_playlist[this.currentTrack].preview)
     .then(function() {
       _this.$play_button.toggleClass('hidden');
@@ -160,7 +159,7 @@ var game = {
     if (player.play) {
       player.pauseTrack();
       this.haveBuzz = true;
-      $('#gamer-'+gamer.id).removeClass('btn-primary').addClass('btn-warning');
+      $('#gamer-' + gamer.id).removeClass('btn-primary').addClass('btn-warning');
       this.timerCountdown(gamer, 0);
       socket.post('/game/winBuzz', gamer, function(){});
     }
@@ -211,10 +210,10 @@ var game = {
 
   goodAnswer: function(gamer) {
     var _this = this;
-    $('#gamer-'+gamer.id).removeClass('btn-warning').addClass('btn-success');
-    socket.post('/game/goodAnswer', gamer, function(){});
+    $('#gamer-' + gamer.id).removeClass('btn-warning').addClass('btn-success');
     this.displayTrack('success');
     this.countPoints(gamer);
+    socket.post('/game/goodAnswer', gamer, function(){});
     setTimeout(function() {
       _this.nextTrack();
       $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
@@ -224,7 +223,7 @@ var game = {
   },
 
   badAnswer: function(gamer) {
-    $('#gamer-'+gamer.id).removeClass('btn-warning').addClass('btn-danger');
+    $('#gamer-' + gamer.id).removeClass('btn-warning').addClass('btn-danger');
     player.playTrack();
   },
 
@@ -238,7 +237,16 @@ var game = {
   },
 
   countPoints: function(gamer) {
-    console.log(player.current_time);
+    var $span = $('#gamer-' + gamer.id + ' span');
+
+    var max_points = 100;
+    var min_points = 60;
+    var dif_points = max_points - min_points;
+
+    var win_points = max_points + Math.ceil( (player.current_time / 30 * - dif_points));
+
+    player.$timer.text("+ " + win_points);
+    $span.html(parseInt($span.html()) + win_points);
   },
 
   levenshteinDistance: function(a, b){
