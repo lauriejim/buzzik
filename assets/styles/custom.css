@@ -159,6 +159,24 @@ input {
   width: 275px;
 }
 
+/* Timer progress bar */
+.timer-progress {
+  width: 100%;
+  height: 5px;
+}
+.timer-progress-wrap {
+  background: #d43f3a;
+  margin: 2px 0;
+  overflow: hidden;
+  position: relative;
+}
+.timer-progress-wrap .timer-progress-bar {
+    background: #ddd;
+    left: 0;
+    position: absolute;
+    top: 0;
+  }
+
 #buzzer {
   background-color: red;
 }

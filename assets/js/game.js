@@ -115,27 +115,61 @@ var game = {
   setSocketListener: function() {
     var _this = this;
     socket.on('newPlayer', function (gamer) {
-      var template =
-      '<div class="col-sm-3 col-md-3">' +
-        '<button class="btn bn-lg btn-primary btn-block gamer-status" id="gamer-' + gamer.id + '">' + gamer.username + '</button>' +
-      '</div>';
-      _this.$gamer_list.append(template);
+      _this.displayGamer(gamer);
     });
     socket.on('haveBuzz', function (gamer) {
-      if (player.play) {
-        player.pauseTrack();
-        game.haveBuzz = true;
-        $('#gamer-'+gamer.id).removeClass('btn-primary').addClass('btn-warning');
-        socket.post('/game/winBuzz', gamer, function(){});
-      }
-      else {
-        socket.post('/game/failBuzz', gamer, function(){});
-      }
+      _this.handleBuzz(gamer);
     });
     socket.on('verifyAnswer', function (response) {
       _this.verifyAnswer(response);
       _this.haveBuzz = false;
     });
+  },
+
+  displayGamer: function(gamer) {
+    var template =
+      '<div class="col-sm-3 col-md-3">' +
+        '<button class="btn bn-lg btn-primary btn-block gamer-status" id="gamer-' + gamer.id + '">' + gamer.username + '</button>' +
+        '<div class="timer-progress-wrap timer-progress">' +
+          '<div class="timer-progress-bar timer-progress" id="timer-' + gamer.id + '"></div>' +
+        '</div>' +
+      '</div>';
+    this.$gamer_list.append(template);
+  },
+
+  handleBuzz: function(gamer) {
+    if (player.play) {
+      player.pauseTrack();
+      this.haveBuzz = true;
+      $('#gamer-'+gamer.id).removeClass('btn-primary').addClass('btn-warning');
+      this.timerCountdown(gamer, 0);
+      socket.post('/game/winBuzz', gamer, function(){});
+    }
+    else {
+      socket.post('/game/failBuzz', gamer, function(){});
+    }
+  },
+
+  timerCountdown: function(gamer, s) {
+    if(!this.haveBuzz) {
+      return;
+    }
+    var _this = this;
+    var duration = 10;
+    var progress_bar = $('#timer-' + gamer.id);
+    var progress_bar_width = progress_bar.width();
+    var distance = progress_bar_width / duration;
+    progress_bar.css('left', distance * s + 'px');
+    s++
+    if (s > 10) {
+      this.haveBuzz = false;
+      socket.post('/game/timeEnd', gamer, function(){});
+      _this.badAnswer(gamer);
+      return;
+    }
+    setTimeout(function () {
+      _this.timerCountdown(gamer, s);
+    }, 1000);
   },
 
   verifyAnswer: function(response) {
@@ -164,6 +198,7 @@ var game = {
       _this.nextTrack();
       $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
       $('.gamer-status').addClass('btn-primary');
+      $('.timer-progress').css('left', '0px');
     }, 1000);
   },
 
@@ -177,6 +212,7 @@ var game = {
     this.nextTrack();
     $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
     $('.gamer-status').addClass('btn-primary');
+    $('.timer-progress').css('left', '0px');
   },
 
   levenshteinDistance: function(a, b){

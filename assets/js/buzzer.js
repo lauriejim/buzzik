@@ -31,6 +31,9 @@ var buzzer = {
     socket.on('winBuzz', function (gamer) {
       if (gamer.id === game.settings.id) _this.displayModal();
     });
+    socket.on('timeEnd', function (gamer) {
+      if (gamer.id === game.settings.id) _this.hideModal();
+    });
     socket.on('goodAnswer', function (req) {
       _this.initBuzzer();
     });
@@ -59,6 +62,10 @@ var buzzer = {
       _this.$modal_input.val("");
       socket.post('/game/verifyAnswer', response, function (){});
     });
+  },
+
+  hideModal: function() {
+    this.$modal.modal('hide');
   },
 
   initBuzzer: function() {

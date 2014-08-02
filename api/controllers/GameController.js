@@ -76,6 +76,10 @@ module.exports = {
 
   badAnswer: function(req, res) {
     sails.sockets.blast('badAnswer', req.params.all(), req.socket);
+  },
+
+  timeEnd: function(req, res) {
+    sails.sockets.blast('timeEnd', req.params.all(), req.socket);
   }
 
 
