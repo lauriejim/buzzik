@@ -25,6 +25,7 @@ module.exports.sockets = {
   // This custom onDisconnect function will be run each time a socket disconnects
   onDisconnect: function(session, socket) {
     if (session.settings && session.settings.connected) {
+      sails.sockets.leave(socket, session.settings.key);
       sails.controllers.game.haveLeave(session.settings);
     }
   },

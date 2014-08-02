@@ -40,6 +40,10 @@ var buzzer = {
     socket.on('haveLeave', function (gamer) {
       game.haveLeave(gamer);
     });
+    socket.on('endGame', function (winner) {
+      _this.buzz = true;
+      _this.endGame(winner);
+    });
   },
 
   displayModal: function() {
@@ -65,6 +69,17 @@ var buzzer = {
       _this.$modal_input.val("");
       socket.post('/game/verifyAnswer', response, function (){});
     });
+  },
+
+  endGame: function(winner) {
+    var _this = this
+    setTimeout(function () {
+      if (game.settings.id === winner.id) {
+        _this.$buzzer.attr('id', 'buzzer-win');
+      } else {
+        _this.$buzzer.attr('id', 'buzzer-loose');
+      }
+    }, 1500);
   },
 
   hideModal: function() {

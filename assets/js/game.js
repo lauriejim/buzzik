@@ -2,6 +2,7 @@ var game = {
 
   $play_button: $('#start'),
   $pause_button: $('#pause'),
+  $leave_button: $('#leave'),
   $gamer_list: $('#gamer-list'),
   $track_container: $('.track-container'),
   $modal_join: $('.join-game'),
@@ -109,11 +110,32 @@ var game = {
 
   nextTrack: function() {
     this.currentTrack++;
-    if (this.currentTrack == this.party_playlist.length) return;
+    if (this.currentTrack == this.party_playlist.length) return this.endGame();
+    $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger').addClass('btn-primary');
+    $('.timer-progress').css('left', '0px');
     player.loadTrack(this.party_playlist[this.currentTrack].preview)
     .then(function() {
       player.playTrack();
     });
+  },
+
+  endGame: function() {
+    var points = 0;
+    var winner;
+    this.$leave_button.removeClass('hidden');
+    this.$play_button.addClass('hidden');
+    $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger').addClass('btn-danger');
+    $('.gamer-status span').each(function () {
+      var gamer_points = $(this).html();
+      if (gamer_points >= points) {
+        points = gamer_points;
+        winner = $(this).parent().attr('id').split('-')[1];
+      }
+    });
+    socket.post('/game/endGame', {id: winner}, function(){});
+    setTimeout(function () {
+      $('#gamer-' + winner).removeClass('btn-danger').addClass('btn-success');
+    }, 1500);
   },
 
   setSocketListener: function() {
@@ -222,9 +244,6 @@ var game = {
     socket.post('/game/goodAnswer', gamer, function(){});
     setTimeout(function() {
       _this.nextTrack();
-      $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
-      $('.gamer-status').addClass('btn-primary');
-      $('.timer-progress').css('left', '0px');
     }, 1500);
   },
 
@@ -234,12 +253,13 @@ var game = {
   },
 
   endTrack: function() {
+    var _this = this;
     socket.post('/game/goodAnswer', {}, function(){});
     this.displayTrack('danger');
-    this.nextTrack();
-    $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
-    $('.gamer-status').addClass('btn-primary');
     $('.timer-progress').css('left', '0px');
+    setTimeout(function() {
+      _this.nextTrack();
+    }, 1500);
   },
 
   haveLeave: function(gamer) {

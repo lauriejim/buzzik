@@ -99,6 +99,10 @@ module.exports = {
 
   haveLeave: function(gamer) {
     sails.sockets.broadcast(gamer.key, 'haveLeave', gamer);
+  },
+
+  endGame: function(req, res) {
+    sails.sockets.broadcast(req.param('key'), 'endGame', req.params.all(), req.socket);
   }
 
 };
