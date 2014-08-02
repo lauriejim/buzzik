@@ -3,6 +3,7 @@ var game = {
   $play_button: $('#start'),
   $pause_button: $('#pause'),
   $gamer_list: $('#gamer-list'),
+  $track_container: $('.track-container'),
   party_playlist: new Array(),
   haveBuzz: false,
 
@@ -91,6 +92,7 @@ var game = {
   startGame: function() {
     var _this = this;
     this.currentTrack = 0;
+    console.log(this.party_playlist[this.currentTrack]);
     player.loadTrack(this.party_playlist[this.currentTrack].preview)
     .then(function() {
       _this.$play_button.toggleClass('hidden');
@@ -128,13 +130,30 @@ var game = {
 
   displayGamer: function(gamer) {
     var template =
-      '<div class="col-sm-3 col-md-3">' +
-        '<button class="btn bn-lg btn-primary btn-block gamer-status" id="gamer-' + gamer.id + '">' + gamer.username + '</button>' +
+      '<div class="col-xs-4 col-sm-3 col-md-3">' +
+        '<button class="btn bn-lg btn-primary btn-block gamer-status" id="gamer-' + gamer.id + '">' +
+          gamer.username + '<span class="label-point label">0</span>' +
+        '</button>' +
         '<div class="timer-progress-wrap timer-progress">' +
           '<div class="timer-progress-bar timer-progress" id="timer-' + gamer.id + '"></div>' +
         '</div>' +
       '</div>';
     this.$gamer_list.append(template);
+  },
+
+  displayTrack: function (status) {
+    var track = this.party_playlist[this.currentTrack];
+    var template =
+      '<div class="col-md-12 bs-callout bs-callout-' + status + ' track-card">' +
+        '<a class="pull-left" target="_blank" href="' + track.link + '">' +
+          '<img class="card-object" src="' + track.album.cover + '" alt="track-cover">' +
+        '</a>' +
+        '<div class="card-body">' +
+          '<h4 class="card-heading">' + track.artist.name + '</h4>' +
+          '<p>' + track.title + '</p>' +
+        '</div>' +
+      '</div>';
+    this.$track_container.prepend(template);
   },
 
   handleBuzz: function(gamer) {
@@ -155,13 +174,13 @@ var game = {
       return;
     }
     var _this = this;
-    var duration = 10;
+    var duration = 15;
     var progress_bar = $('#timer-' + gamer.id);
     var progress_bar_width = progress_bar.width();
     var distance = progress_bar_width / duration;
     progress_bar.css('left', distance * s + 'px');
     s++
-    if (s > 10) {
+    if (s > duration) {
       this.haveBuzz = false;
       socket.post('/game/timeEnd', gamer, function(){});
       _this.badAnswer(gamer);
@@ -194,12 +213,14 @@ var game = {
     var _this = this;
     $('#gamer-'+gamer.id).removeClass('btn-warning').addClass('btn-success');
     socket.post('/game/goodAnswer', gamer, function(){});
+    this.displayTrack('success');
+    this.countPoints(gamer);
     setTimeout(function() {
       _this.nextTrack();
       $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
       $('.gamer-status').addClass('btn-primary');
       $('.timer-progress').css('left', '0px');
-    }, 1000);
+    }, 2000);
   },
 
   badAnswer: function(gamer) {
@@ -209,10 +230,15 @@ var game = {
 
   endTrack: function() {
     socket.post('/game/goodAnswer', {}, function(){});
+    this.displayTrack('danger');
     this.nextTrack();
     $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger');
     $('.gamer-status').addClass('btn-primary');
     $('.timer-progress').css('left', '0px');
+  },
+
+  countPoints: function(gamer) {
+    console.log(player.current_time);
   },
 
   levenshteinDistance: function(a, b){

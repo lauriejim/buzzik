@@ -65,6 +65,7 @@ var buzzer = {
   },
 
   hideModal: function() {
+    this.$modal_input.val("");
     this.$modal.modal('hide');
   },
 
