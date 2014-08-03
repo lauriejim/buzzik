@@ -20,6 +20,11 @@ module.exports.policies = {
   // (`true` allows public access)
   '*': true,
 
+  GameController: {
+    playDesktop: 'isConnected',
+    playMobile: 'isConnected',
+  }
+
 	// Here's an example of mapping some policies to run before
   // a controller and its actions
 	// RabbitController: {

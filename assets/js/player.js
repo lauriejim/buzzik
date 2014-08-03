@@ -11,10 +11,16 @@ var player = {
   play: false,
 
   init: function() {
+    var _this = this;
     var progress_CTX = this.border_progress.getContext('2d');
     this.drawInactive(progress_CTX);
     this.$times_container.addClass('progress-bar-display');
     this.drawProgress();
+    $(this.player).on('ended', function () {
+      _this.$play_button.toggleClass('hidden');
+      _this.$pause_button.toggleClass('hidden');
+      game.endTrack();
+    });
   },
 
   drawInactive: function(progress_CTX){
@@ -67,7 +73,7 @@ var player = {
     this.play = false;
     this.player.src = track;
     this.player.load();
-    $(this.player).on('canplaythrough', function(){
+    $(this.player).one('canplaythrough', function(){
       deferred.resolve();
     });
     return deferred.promise()

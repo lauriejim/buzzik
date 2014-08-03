@@ -31,8 +31,18 @@ var buzzer = {
     socket.on('winBuzz', function (gamer) {
       if (gamer.id === game.settings.id) _this.displayModal();
     });
+    socket.on('timeEnd', function (gamer) {
+      if (gamer.id === game.settings.id) _this.hideModal();
+    });
     socket.on('goodAnswer', function (req) {
       _this.initBuzzer();
+    });
+    socket.on('haveLeave', function (gamer) {
+      game.haveLeave(gamer);
+    });
+    socket.on('endGame', function (winner) {
+      _this.buzz = true;
+      _this.endGame(winner);
     });
   },
 
@@ -59,6 +69,22 @@ var buzzer = {
       _this.$modal_input.val("");
       socket.post('/game/verifyAnswer', response, function (){});
     });
+  },
+
+  endGame: function(winner) {
+    var _this = this
+    setTimeout(function () {
+      if (game.settings.id === winner.id) {
+        _this.$buzzer.attr('id', 'buzzer-win');
+      } else {
+        _this.$buzzer.attr('id', 'buzzer-loose');
+      }
+    }, 1500);
+  },
+
+  hideModal: function() {
+    this.$modal_input.val("");
+    this.$modal.modal('hide');
   },
 
   initBuzzer: function() {

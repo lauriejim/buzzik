@@ -17,7 +17,7 @@
     <!-- END Action button  -->
 
     <!-- Create modal -->
-    <div class="modal fade create-game" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade create-game" role="dialog">
       <div class="modal-dialog modal-lg">
         <div class="container">
           <div class="row">
@@ -28,10 +28,12 @@
                   <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('Close') %></span></button>
                   <h3 class="modal-title"><%= __('Create party') %></h3>
                   <input type="text" class="form-control" name="game_name" placeholder="<%= __('Party name') %>" required>
+                  <span class="label label-info"><%= __('Your deezer playlist ID * optional') %></span>
+                  <input type="text" class="form-control modal-label" name="game_playlist" placeholder="<%= __('Playlist ID') %>">
                   <span class="label label-primary"><%= __('Number of tracks') %></span>
                   <div class="range">
                     <input type="range" name="game_tracks" min="1" max="20" value="10" onchange="setTracks(this)">
-                    <output id="range">20</output>
+                    <output id="range">10</output>
                   </div>
                   <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><%= __('Play') %></button>
                 </form>
@@ -45,7 +47,7 @@
     <!-- END Create modal -->
 
     <!-- Join modal -->
-    <div class="modal fade join-game" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade join-game" role="dialog" <% if (key) { %>show="true"<% } %>>
       <div class="modal-dialog modal-lg">
         <div class="container">
           <div class="row">
@@ -57,7 +59,11 @@
                   <h3 class="modal-title"><%= __('Join party') %></h3>
                   <input type="text" class="form-control" name="game_username" placeholder="<%= __('Pseudo') %>" required>
                   <span class="label label-primary"><%= __('Private party key') %></span>
-                  <input type="text" class="form-control modal-label" name="game_key" placeholder="<%= __('Key') %>" required>
+                  <input type="text" class="form-control modal-label" name="game_key" placeholder="<%= __('Key') %>"
+                  <% if (key) { %>
+                    value="<%= key %>"
+                  <% }%>
+                  required>
                   <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><%= __('Play') %></button>
                 </form>
               </div>
