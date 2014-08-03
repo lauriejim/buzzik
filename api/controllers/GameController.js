@@ -24,7 +24,7 @@ module.exports = {
       platform: 'player',
       playlist: req.param('game_playlist'),
       host: req.host,
-      port: sails.config.port,
+      port: (sails.config.environment === "development") ? ':' + sails.config.port : "",
       key: ''
     };
 
