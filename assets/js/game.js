@@ -96,6 +96,7 @@ var game = {
   startGame: function() {
     var _this = this;
     this.currentTrack = 0;
+    $('.track-count').html(this.currentTrack + 1 + ' / ' + this.party_playlist.length);
     player.loadTrack(this.party_playlist[this.currentTrack].preview)
     .then(function() {
       _this.$play_button.toggleClass('hidden');
@@ -113,6 +114,7 @@ var game = {
     if (this.currentTrack == this.party_playlist.length) return this.endGame();
     $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger').addClass('btn-primary');
     $('.timer-progress').css('left', '0px');
+    $('.track-count').html(this.currentTrack + 1 + ' / ' + this.party_playlist.length);
     player.loadTrack(this.party_playlist[this.currentTrack].preview)
     .then(function() {
       player.playTrack();
