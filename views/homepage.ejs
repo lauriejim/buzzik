@@ -28,10 +28,12 @@
                   <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('Close') %></span></button>
                   <h3 class="modal-title"><%= __('Create party') %></h3>
                   <input type="text" class="form-control" name="game_name" placeholder="<%= __('Party name') %>" required>
+                  <span class="label label-info"><%= __('Your deezer playlist ID * optional') %></span>
+                  <input type="text" class="form-control modal-label" name="game_playlist" placeholder="<%= __('Playlist ID') %>">
                   <span class="label label-primary"><%= __('Number of tracks') %></span>
                   <div class="range">
                     <input type="range" name="game_tracks" min="1" max="20" value="10" onchange="setTracks(this)">
-                    <output id="range">20</output>
+                    <output id="range">10</output>
                   </div>
                   <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><%= __('Play') %></button>
                 </form>

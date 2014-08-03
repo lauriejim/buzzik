@@ -40,12 +40,13 @@ var game = {
 
     deezer.init();
 
-    deezer.playlist('640657295')
-    .then(function (playlist) {
-      _this.playlist = playlist;
-      _this.getSettings()
-      .then(function (settings) {
-        _this.settings = settings;
+    this.getSettings()
+    .then(function (settings) {
+      _this.settings = settings;
+      var playlist = (_this.settings.playlist) ? _this.settings.playlist : '589406715';
+      deezer.playlist(playlist)
+      .then(function (playlist) {
+        _this.playlist = playlist;
         _this.createPlaylist();
       });
     });
@@ -64,7 +65,6 @@ var game = {
     var _this = this;
     var playlist = new Array();
     var track_selected = new Array();
-
     for (var i = 0, length = this.playlist.tracks.data.length; i < length; i++) {
       var track = this.playlist.tracks.data[i];
       if (track.readable) playlist.push(track);
@@ -80,7 +80,7 @@ var game = {
       if (_this.party_playlist.length == _this.settings.tracks) {
         _this.startGame();
       } else {
-        var track_index = Math.floor((Math.random() * _this.playlist.length) + 1);
+        var track_index = Math.floor((Math.random() * _this.playlist.length-1) + 1);
         var track = _this.playlist[track_index];
 
         if (track_selected.indexOf(track_index) === -1) {

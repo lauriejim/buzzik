@@ -22,6 +22,7 @@ module.exports = {
       name: req.param('game_name'),
       tracks: req.param('game_tracks'),
       platform: 'player',
+      playlist: req.param('game_playlist'),
       key: ''
     };
 
