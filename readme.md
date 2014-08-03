@@ -5,18 +5,15 @@
 
 ## Start with buzzik
 
-**Require [node](http://nodejs.org) and [mongodb](http://www.mongodb.org/)**
+**Require [node](http://nodejs.org)**
 
 ```sh
 # Get node and mongodb
 $ brew install node
-$ brew install mongodb
 ```
 **Launch buzzik**
 
 ```sh
-# Start mongodb
-$ mongod
 # Start buzzik
 $ npm install
 $ node app
