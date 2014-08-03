@@ -132,6 +132,9 @@ a {
 .range input[type="range"] {
     outline: none;
 }
+#gamer-list {
+  min-height: 43px;
+}
 
 /* Trak progress bar */
 .track-progress-bar-container {
