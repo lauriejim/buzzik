@@ -1,6 +1,6 @@
 ### Buzzik
 
-Buzzik is an interactive blind test to set the mood for your party.
+> Description in coming.
 
 
 ## Start with buzzik
@@ -23,7 +23,7 @@ $ node app
 ```
 
 > ######Note
-> Buzzik is found on sails.js framework, so if you have sails.js installed, run ```sh $ sails lift ```
+> Buzzik is found on sails.js framework, so if you have sails.js installed, run ```$ sails lift```
 
 ## How play to buzzik
 
