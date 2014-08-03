@@ -1,0 +1,26 @@
+<div class="container" id="buzzer" role="main">
+
+  <!-- Response modal -->
+  <div class="modal fade" id="modal-buzz" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-lg">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-2">
+
+            <div class="account-wall">
+              <form class="modal-form">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('Close') %></span></button>
+                <h3 class="modal-title"><%= __('Artiste name') %></h3>
+                <input type="text" class="form-control" name="artist_name" placeholder="<%= __('Artiste name') %>" required>
+                <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><%= __('Send') %></button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END Response modal -->
+
+</div>

@@ -1,0 +1,52 @@
+<div id="dz-root"></div>
+<audio id="audio-player" src="" ontimeupdate="player.updateTimer(this);"></audio>
+<script src="http://cdn-files.deezer.com/js/min/dz.js"></script>
+<div class="container" id="player" role="main">
+
+  <div class="jumbotron">
+
+    <!-- List gamer  -->
+    <div class="row" id="gamer-list">
+
+    </div>
+    <!-- END List player  -->
+
+    <!-- Player container -->
+    <div class="row col-md-6 col-sm-6 player-container">
+
+      <!-- Track progress bar -->
+      <div class="row track-progress-bar-container">
+
+        <div class="track-progress-bar">
+          <canvas id="inactive-progress" class="progress-inactive" height="275px" width="275px"></canvas>
+          <canvas id="active-progress" class="progress-active"  height="275px" width="275px"></canvas>
+          <p>30s</p>
+        </div>
+
+      </div>
+      <!-- END Track progress bar -->
+
+      <!-- Play / Pause button -->
+      <div class="row">
+        <div class="col-sm-4 col-md-4 col-sm-offset-4 col-md-offset-4">
+          <button class="btn bn-lg btn-success btn-block hidden" id="start"><%= __('START') %></button>
+          <button class="btn bn-lg btn-warning btn-block hidden" id="pause"><%= __('PAUSE') %></button>
+          <a href="/"><button class="btn bn-lg btn-info btn-block hidden" id="leave"><%= __('LEAVE') %></button></a>
+        </div>
+      </div>
+      <!-- END Play / Pause button -->
+
+    </div>
+    <!-- END Player container -->
+
+    <!-- Player container -->
+    <div class="row  col-md-6 col-md-offset-0 col-sm-5 col-sm-offset-1 track-container">
+    </div>
+
+    <!-- Footer  -->
+    <div class="row">
+    </div>
+    <!-- END Footer  -->
+
+  </div>
+</div>
