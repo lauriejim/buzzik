@@ -1,6 +1,6 @@
 /* General */
 .jumbotron {
-  margin-top: 75px;
+  margin-top: 15px;
   background-color: #f7f7f7;
 }
 div {
@@ -12,6 +12,10 @@ input {
 }
 a {
   text-decoration: none !important;
+}
+
+.game-description {
+  margin-bottom: 40px;
 }
 
 /* Modal form */
