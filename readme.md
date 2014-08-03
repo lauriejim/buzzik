@@ -1,6 +1,6 @@
 ### Buzzik
 
-> Description in coming.
+> Buzzik is realy easy platform to create blind test and play with your friends.
 
 
 ## Start with buzzik
@@ -25,7 +25,7 @@ $ node app
 ## How play to buzzik
 
 First of all, make sure all your device are connected on the same wi-fi.
-After that, with your computer find your IP
+After that, with your computer find your IP.
 ```sh
 $ ifconfig
 ```
