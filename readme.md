@@ -14,8 +14,6 @@ $ brew install node
 **Launch buzzik**
 
 ```sh
-# Start mongodb
-$ mongod
 # Start buzzik
 $ npm install
 $ node app
