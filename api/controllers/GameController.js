@@ -23,6 +23,8 @@ module.exports = {
       tracks: req.param('game_tracks'),
       platform: 'player',
       playlist: req.param('game_playlist'),
+      host: req.host,
+      port: sails.config.port,
       key: ''
     };
 

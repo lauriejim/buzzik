@@ -23,9 +23,19 @@ $ node app
 ```
 
 > ######Note
-> Buzzik is found on sails.js framework, so if you have sails.js installed, run ```sh $ sails lift ``
+> Buzzik is found on sails.js framework, so if you have sails.js installed, run ```sh $ sails lift ```
 
-## License
+## How play to buzzik
+
+First of all, make sure all your device are connected on the same wi-fi.
+After that, with your computer find your IP
+```sh
+$ ifconfig
+```
+Next go to http://YOUR_IP:1337/ with your chrome browser.
+
+Now enjoy !
+
 
 [MIT License](http://sails.mit-license.org/)  Copyright © 2012-2014 Jim LAURIE
 

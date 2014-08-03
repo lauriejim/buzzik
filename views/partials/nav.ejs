@@ -14,7 +14,7 @@
           <li id="fat-menu" class="dropdown open">
             <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= __('QR code') %><span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
-              <li role="presentation"><img src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl=http://192.168.1.57:1337?join=<%= req.session.settings.key %>" /></li>
+              <li role="presentation"><img src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl=http://<%= req.session.settings.host %>:<%= req.session.settings.port %>?join=<%= req.session.settings.key %>" /></li>
             </ul>
           </li>
         </ul>
