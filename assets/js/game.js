@@ -46,6 +46,7 @@ var game = {
       var playlist = (_this.settings.playlist) ? _this.settings.playlist : '589406715';
       deezer.playlist(playlist)
       .then(function (playlist) {
+        if (playlist.error) window.location = "/";
         _this.playlist = playlist;
         _this.createPlaylist();
       });
@@ -125,7 +126,8 @@ var game = {
     var points = 0;
     var winner;
     this.$leave_button.removeClass('hidden');
-    this.$play_button.addClass('hidden');
+    this.$play_button.removeClass('hidden').addClass('hidden');
+    this.$pause_button.removeClass('hidden').addClass('hidden');
     $('.gamer-status').removeClass('btn-primary btn-warning btn-success btn-danger').addClass('btn-danger');
     $('.gamer-status span').each(function () {
       var gamer_points = $(this).html();
