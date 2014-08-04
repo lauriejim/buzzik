@@ -221,3 +221,9 @@ a {
 .popover, .arrow, .popover-content {
   background-color: red;
 }
+
+@media screen and (max-width: 600) {
+  .navbar-fixed-bottom {
+    position: relative;
+  }
+}
