@@ -46,6 +46,7 @@ var game = {
       var playlist = (_this.settings.playlist) ? _this.settings.playlist : '589406715';
       deezer.playlist(playlist)
       .then(function (playlist) {
+        if (playlist.error) window.location = "/";
         _this.playlist = playlist;
         _this.createPlaylist();
       });
