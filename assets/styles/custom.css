@@ -222,7 +222,7 @@ a {
   background-color: red;
 }
 
-@media screen and (max-width: 600) {
+@media screen and (min-width: 10px) and (max-width: 600px) {
   .navbar-fixed-bottom {
     position: relative;
   }
