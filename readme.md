@@ -21,7 +21,7 @@ $ npm start
 ```
 
 > ######Note
-> Buzzik is found on sails.js framework, so if you have sails.js installed, run ```$ sails lift```
+> Buzzik is based on sails.js framework, so if you have sails.js installed, run ```$ sails lift```
 
 ## How play to buzzik
 
@@ -34,6 +34,7 @@ Next go to http://YOUR_IP:1337/ with your chrome browser.
 
 Now enjoy !
 
+![alt tag](https://raw.githubusercontent.com/lauriejim/buzzik/master/assets/images/screen.png)
 
 [MIT License](http://sails.mit-license.org/)  Copyright © 2012-2014 Jim LAURIE
 
