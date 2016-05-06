@@ -1,22 +1,23 @@
 ### Buzzik
 
-> Buzzik is realy easy platform to create blind test and play with your friends.
+> Buzzik is really easy platform to create blind test and play with your friends.
 
 
 ## Start with buzzik
 
-**Require [node](http://nodejs.org)**
+**Require [node](http://nodejs.org) and [mongoDB](https://www.mongodb.com/)**
 
 ```sh
 # Get node and mongodb
 $ brew install node
+$ brew install mongodb
 ```
 **Launch buzzik**
 
 ```sh
 # Start buzzik
 $ npm install
-$ node app
+$ npm start
 ```
 
 > ######Note
