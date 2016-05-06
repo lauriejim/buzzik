@@ -6,6 +6,7 @@
   "keywords": [],
   "dependencies": {
     "ejs": "~0.8.4",
+    "express": "^4.13.4",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-coffee": "~0.10.1",
@@ -29,10 +30,13 @@
     "debug": "node debug app.js"
   },
   "main": "app.js",
+  "engines": {
+    "node": "4.4.3"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/hack1337/buzzik.git"
   },
   "author": "Jim Laurie",
-  "license": ""
+  "license": "MIT"
 }
